@@ -1,138 +1,101 @@
 
 <template>
-  <div class="relative flex items-center justify-center w-full h-screen overflow-hidden transition-colors duration-300" :class="isDarkMode ? 'bg-dark' : 'bg-light'">
-    <div ref="ellipseBlur" class="absolute w-[100vh] h-[100vh] rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 transition-opacity duration-500 opacity-0 will-change-auto"></div>
-    
+  <DashboardLayout :isDarkMode="isDarkMode"
+  @update:isDarkMode="isDarkMode = $event">
     <div 
       class="relative z-20 w-full max-w-md p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border"
       :class="[
         isDarkMode 
           ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
-          : 'bg-light-card border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'
-       
+          : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'
       ]"
-      @mouseenter="isHovered = true" 
-      @mouseleave="isHovered = false"
     >
-    <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">April 29, Tues</p>
-  <p class="where text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Lyon</p>
-  
-      <h2 class="mt-5 text-8xl font-semibold" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
-        18°C
-      </h2>
-      <p class="mb-6" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
-      </p>
-      <section class="grid grid-cols-3 gap4">
-        <section class="bullet-point-weather flex ">
-            <BulletPoint :class="isDarkMode ?' bg-dark-card' : 'bg-dark'" class="w-9 h-9 mt-1 mr-1  border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' " :image="'/src/assets/img/icons8-wind-50.png'" size="20px"/>
-              <div class="flex-colomn mt-1 ml-1">
-                <p class="text-white text-sm"  :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Wind</p>
-                <p  class="text-white text-sm"  :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">42 km/h</p>
-              </div>
-        </section>
-
-        <section class="bullet-point-weather flex ">
-            <BulletPoint :class="isDarkMode ? 'bg-dark-card' : 'bg-dark'"  class="w-9 h-9 mt-1 mr-1  border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' " :image="'/src/assets/img/icons8-humidity-64.png'" size="20px"/>
-              <div class="flex-colomn mt-1 ml-1">
-                <p :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'" class="text-white text-sm">Humidity</p>
-                <p :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'"  class="text-white text-sm">82%</p>
-              </div>
-        </section>
-
-        <section class="bullet-point-weather flex ">
-            <BulletPoint :class="isDarkMode ? 'bg-dark-card' : 'bg-dark'" class="w-9 h-9 mt-1 mr-1 border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' " :image="'/src/assets/img/icons8-umbrella-50.png'" size="20px"/>
-              <div class="flex-colomn mt-1 ml-1">
-                <p :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary '" class="text-white text-sm">Precipitation</p>
-                <p :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'" class="text-white text-sm">55%</p>
-              </div>
-        </section>
-
-      </section>
-        
+      <!-- En-tête -->
+      <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">April 29, Tues</p>
+      <p class="where text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Lyon</p>
       
+      <h2 class="mt-5 text-8xl font-semibold" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">18°C</h2>
       
-    </div>
+      <section class="grid grid-cols-3 gap-4">
     
-    <div class="absolute bottom-4 right-4 z-30">
-      <button 
-        class="p-2 rounded-full transition-colors duration-300"
-        :class="isDarkMode ? 'bg-dark-card text-white' : 'bg-light-card text-gray-800'"
-        @click="toggleTheme"
-      >
-        {{ isDarkMode ? '☀️' : '🌙' }}
-      </button>
+        <section class="bullet-point-weather flex">
+          <BulletPoint 
+            :class="[
+              'w-9 h-9 mt-1 mr-1',
+              isDarkMode ? 'bg-dark-card' : 'bg-dark',
+              'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
+            ]"
+            :image="'/src/assets/img/icons8-wind-50.png'" 
+            size="20px"
+          />
+          <div class="flex-column mt-1 ml-1">
+            <p class="text-sm" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Wind</p>
+            <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">42 km/h</p>
+          </div>
+        </section>
+
+        
+        <section class="bullet-point-weather flex">
+          <BulletPoint 
+            :class="[
+              'w-9 h-9 mt-1 mr-1',
+              isDarkMode ? 'bg-dark-card' : 'bg-dark',
+              'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
+            ]"
+            :image="'/src/assets/img/icons8-humidity-64.png'" 
+            size="20px"
+          />
+          <div class="flex-column mt-1 ml-1">
+            <p class="text-sm" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Humidity</p>
+            <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">82%</p>
+          </div>
+        </section>
+
+        <!-- Precipitation -->
+        <section class="bullet-point-weather flex">
+          <BulletPoint 
+            :class="[
+              'w-9 h-9 mt-1 mr-1',
+              isDarkMode ? 'bg-dark-card' : 'bg-dark',
+              'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
+            ]"
+            :image="'/src/assets/img/icons8-umbrella-50.png'" 
+            size="20px"
+          />
+          <div class="flex-column mt-1 ml-1">
+            <p class="text-sm" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Precipitation</p>
+            <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">55%</p>
+          </div>
+        </section>
+      </section>
     </div>
-  </div>
+  </DashboardLayout>
 </template>
 
 <script>
+
+import DashboardLayout from '../layout/DashboardLayout.vue'
 import BulletPoint from './BulletPoint.vue'
 export default {
+  name: 'WidgetWeatherHome',
   components: {
     BulletPoint,
+    DashboardLayout
   },
   data() {
     return {
-      isHovered: false,
-      isDarkMode: true, 
-      animationFrameId: null,
-      time: 0,
-      waveSpeed: 0.001,
-      waveAmplitude: 40,
-    }
-  },
-  mounted() {
-    this.startWaveAnimation();
-    this.updateEllipseColor();
-    if (this.$refs.ellipseBlur) {
-      this.$refs.ellipseBlur.style.opacity = this.isDarkMode ? "0.3" : "0.7";
-    }
-  },
-  beforeDestroy() {
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-  },
-  methods: {
-    toggleTheme() {
-      this.isDarkMode = !this.isDarkMode;
-      this.updateEllipseColor();
-      if (this.$refs.ellipseBlur) {
-        this.$refs.ellipseBlur.style.opacity = this.isDarkMode ? "0.4" : "0.7";
-      }
-    },
-    updateEllipseColor() {
-      if (this.$refs.ellipseBlur) {
-        this.$refs.ellipseBlur.style.backgroundColor = this.isDarkMode 
-          ? 'var(--color-dark-ellipse)' 
-          : 'var(--color-light-ellipse)';
-      }
-    },
-    startWaveAnimation() {
-      this.time = 0;
-      this.animateWave();
-    },
-    animateWave() {
-      this.time += 1;
-      
-      const x = 50 + Math.sin(this.time * this.waveSpeed) * this.waveAmplitude;
-      const y = 50 + Math.cos(this.time * this.waveSpeed * 1.2) * this.waveAmplitude;
-      
-      if (this.$refs.ellipseBlur) {
-        this.$refs.ellipseBlur.style.left = `${x}%`;
-        this.$refs.ellipseBlur.style.top = `${y}%`;
-        this.$refs.ellipseBlur.style.filter = `blur(${this.isDarkMode ? '150px' : '130px'})`;
-      }
-      
-      this.animationFrameId = requestAnimationFrame(this.animateWave);
+      isDarkMode: true
     }
   }
 }
 </script>
 
 <style>
+
+
 :root {
   /* Thème sombre */
+  --color-sidebar: #1f28338e;
   --color-dark-bg: #0B0C10;
   --color-dark-card: rgba(135, 164, 210, 0.15);
   --color-dark-border: rgba(255, 255, 255, 0.08);
@@ -155,6 +118,10 @@ export default {
   --color-light-shadow: rgba(135, 164, 210, 0.2);
   --color-light-shadow-hover: rgba(135, 164, 210, 0.3);
   --color-light-ellipse: #87A4D2;
+}
+
+.bg-dark-sidebar{
+  background-color: var(--color-sidebar);
 }
 
 .bg-dark {

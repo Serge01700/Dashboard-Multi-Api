@@ -1,16 +1,26 @@
 <template>
-<WidgetWeather />
+<div>
+    
+    <WidgetWeather  class=""/>
+  
+</div>
+
+
 
 </template>
 
 <script >
 import WidgetWeather from './components/WidgetWeatherHome.vue'
+import DashboardLayout from './layout/DashboardLayout.vue';
+import Sidebar from './components/Sidebar.vue';
 
 
 
 export default {
     components:{
-        WidgetWeather
+        WidgetWeather,
+        DashboardLayout,
+        Sidebar
     }
 }
 </script>
