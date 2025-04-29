@@ -1,0 +1,9 @@
+@import './base.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'GT' ;
+    src: url('../fonts/GT.otf');
+}
