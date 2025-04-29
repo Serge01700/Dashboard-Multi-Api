@@ -1,7 +1,8 @@
 <template>
 <div>
     
-    <WidgetWeather  class=""/>
+    <WidgetWeather  class="hidden"/>
+    <Sidebar />
   
 </div>
 
