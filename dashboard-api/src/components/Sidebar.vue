@@ -4,12 +4,12 @@
     isDarkMode ? 'bg-dark-card border-dark-border' : 'bg-dark border-light-border'
   ]">
     <ul class="">
-      <li><img src="../assets/img/home.png" alt=""></li>
-      <li><img src="../assets/img/icons8-statistics-24 1.png" alt=""></li>
+      <li><img src="../assets/img/icons8-home-100.png" alt=""></li>
+      <li><img src="../assets/img/icons8-increase-100.png" alt=""></li>
       <li><img src="../assets/img/icons8-calendrier-50.png" alt=""></li>
       <li><img src="../assets/img/icons8-météo-pomme-50.png" alt=""></li>
-      <li><img src="../assets/img/icons8-rappels-50.png" alt=""></li>
-      <li><img src="../assets/img/icons8-chat-64.png" alt=""></li>
+      <li><img src="../assets/img/icons8-to-do-100.png" alt=""></li>
+      <li><img src="../assets/img/icons8-email-96.png" alt=""></li>
       <li><img src="../assets/img/icons8-settings-100.png" alt=""></li>
     </ul>
  </nav>
