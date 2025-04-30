@@ -73,13 +73,12 @@
 
 <script>
 
-import DashboardLayout from '../layout/DashboardLayout.vue'
+
 import BulletPoint from './BulletPoint.vue'
 export default {
   name: 'WidgetWeatherHome',
   components: {
     BulletPoint,
-    DashboardLayout
   },
   props: {
     isDarkMode: {
@@ -92,107 +91,4 @@ export default {
 
 <style>
 
-
-:root {
-  /* Thème sombre */
-  --color-sidebar: #1f28338e;
-  --color-dark-bg: #0B0C10;
-  --color-dark-card: rgba(135, 164, 210, 0.15);
-  --color-dark-border: rgba(255, 255, 255, 0.08);
-  --color-dark-text-primary: rgba(255, 255, 255, 0.9);
-  --color-dark-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-dark-accent: rgba(62, 116, 255, 0.7);
-  --color-dark-accent-hover: rgba(62, 116, 255, 0.9);
-  --color-dark-shadow: rgba(31, 38, 135, 0.15);
-  --color-dark-shadow-hover: rgba(62, 116, 255, 0.1);
-  --color-dark-ellipse: #3E74FF;
-
-  /* Thème clair */
-  --color-light-bg: #F5F7FA;
-  --color-light-card: rgba(255, 255, 255, 0.7);
-  --color-light-border: rgba(255, 255, 255, 0.8);
-  --color-light-text-primary: #2D3748;
-  --color-light-text-secondary: #4A5568;
-  --color-light-accent: #87A4D2;
-  --color-light-accent-hover: #7691BC;
-  --color-light-shadow: rgba(135, 164, 210, 0.2);
-  --color-light-shadow-hover: rgba(135, 164, 210, 0.3);
-  --color-light-ellipse: #87A4D2;
-}
-
-.bg-dark-sidebar{
-  background-color: var(--color-sidebar);
-}
-
-.bg-dark {
-  background-color: var(--color-dark-bg);
-}
-
-.bg-light {
-  background-color: var(--color-light-bg);
-}
-
-.bg-dark-card {
-  background-color: var(--color-dark-card);
-}
-
-.bg-light-card {
-  background-color: var(--color-light-card);
-}
-
-.border-dark-border {
-  border-color: var(--color-dark-border);
-}
-
-.border-light-border {
-  border-color: var(--color-light-border);
-}
-
-.text-dark-text-primary {
-  color: var(--color-dark-text-primary);
-}
-
-.text-light-text-primary {
-  color: var(--color-light-text-primary);
-}
-
-.text-dark-text-secondary {
-  color: var(--color-dark-text-secondary);
-}
-
-.text-light-text-secondary {
-  color: var(--color-light-text-secondary);
-}
-
-.bg-dark-accent {
-  background-color: var(--color-dark-accent);
-}
-
-.bg-light-accent {
-  background-color: var(--color-light-accent);
-}
-
-.hover\:bg-dark-accent-hover:hover {
-  background-color: var(--color-dark-accent-hover);
-}
-
-.hover\:bg-light-accent-hover:hover {
-  background-color: var(--color-light-accent-hover);
-}
-
-.shadow-dark-shadow {
-  box-shadow: 0 8px 32px 0 var(--color-dark-shadow);
-}
-
-.shadow-light-shadow {
-  box-shadow: 0 8px 32px 0 var(--color-light-shadow);
-}
-
-.hover\:shadow-dark-shadow-hover:hover {
-  box-shadow: 0 12px 40px 0 var(--color-dark-shadow-hover);
-}
-
-.hover\:shadow-light-shadow-hover:hover {
-  box-shadow: 0 12px 40px 0 var(--color-light-shadow-hover);
-}
 </style>
