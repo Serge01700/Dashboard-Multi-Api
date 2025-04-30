@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/page/HomePage.vue'
-import DashboardLayout from '@/layout/DashboardLayout.vue'
+import DashboardLayout from '../layouts/DashboardLayout.vue'
 
 const routes = [
     {
@@ -10,26 +10,36 @@ const routes = [
     },
 
     {
+        path: '/login',
+        name : 'login',
+        props: true,
+        component : () => import('@/page/Login.vue')
+    },
+
+    {
+        path: '/register',
+        name: 'register',
+        component : () => import('@/page/Register.vue')
+    },
+    {
         path: '/dashboard',
         component: DashboardLayout,
+        props: true,
            children: [
                {
-                   path: '/DashboardHome',
-                   name: 'Dashboard',
+                   path: 'home',
+                   name: 'DashboardHome',
                    component : () => import('@/page/HomeDashboard.vue')
                },
 
                {
-                   path: 'Settings',
+                   path: 'settings',
                    name: 'DashboardSetting',
                    component : () => import('@/page/DashboardSettings.vue')
                    
                }
            ]
     }
-
-
-  
 
 ]
 

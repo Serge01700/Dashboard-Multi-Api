@@ -2,6 +2,7 @@
 <div>
    <div>
     <RouterView :isDarkMode="isDarkMode" @update:isDarkMode="toggleTheme"/>
+    
    </div>
   
 </div>
@@ -12,7 +13,7 @@
 
 <script >
 import WidgetWeather from './components/WidgetWeatherHome.vue'
-import DashboardLayout from './layout/DashboardLayout.vue';
+
 import Sidebar from './components/Sidebar.vue';
 import HomePage from './page/HomePage.vue';
 
@@ -21,9 +22,14 @@ import HomePage from './page/HomePage.vue';
 export default {
     components:{
         WidgetWeather,
-        DashboardLayout,
         Sidebar,
         HomePage
+    },
+
+    data(){
+        return{
+            isDarkMode: true
+        }
     },
 
     methods: {
