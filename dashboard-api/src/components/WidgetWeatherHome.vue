@@ -1,7 +1,6 @@
 
 <template>
-  <DashboardLayout :isDarkMode="isDarkMode"
-  @update:isDarkMode="isDarkMode = $event">
+
     <div 
       class="relative z-20 w-full max-w-md p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border"
       :class="[
@@ -69,7 +68,7 @@
         </section>
       </section>
     </div>
-  </DashboardLayout>
+
 </template>
 
 <script>
@@ -82,9 +81,10 @@ export default {
     BulletPoint,
     DashboardLayout
   },
-  data() {
-    return {
-      isDarkMode: true
+  props: {
+    isDarkMode: {
+      type: Boolean,
+      required: true
     }
   }
 }
