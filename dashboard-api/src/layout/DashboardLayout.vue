@@ -4,8 +4,11 @@
     <div ref="ellipseBlur" 
          class="absolute w-[100vh] h-[100vh] rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 transition-opacity duration-500 opacity-0 will-change-auto">
     </div>
-    
-    <slot> </slot>
+    <Sidebar :isDarkMode="isDarkMode" />
+    <slot> 
+  <RouterView :isDarkMode="isDarkMode" />
+      
+    </slot>
 
     <div class="absolute bottom-4 right-4 z-30">
       <button 
@@ -17,10 +20,16 @@
       </button>
     </div>
   </div>
+
+  
 </template>
 
 <script>
+
+import Sidebar from '../components/Sidebar.vue'
+
 export default {
+  components: { Sidebar },
     name:'DahsboardLayout',
   data() {
     return {

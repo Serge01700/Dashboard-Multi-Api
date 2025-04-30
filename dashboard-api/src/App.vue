@@ -1,9 +1,8 @@
 <template>
 <div>
-    <AnimatedBackground />
-    
-    <WidgetWeather  class="hidden"/>
-    <Sidebar />
+   <div>
+    <RouterView :isDarkMode="isDarkMode" @update:isDarkMode="toggleTheme"/>
+   </div>
   
 </div>
 
@@ -15,7 +14,7 @@
 import WidgetWeather from './components/WidgetWeatherHome.vue'
 import DashboardLayout from './layout/DashboardLayout.vue';
 import Sidebar from './components/Sidebar.vue';
-import AnimatedBackground from './components/AnimatedBackground.vue';
+import HomePage from './page/HomePage.vue';
 
 
 
@@ -24,7 +23,13 @@ export default {
         WidgetWeather,
         DashboardLayout,
         Sidebar,
-        AnimatedBackground
+        HomePage
+    },
+
+    methods: {
+        toggleTheme(){
+            this.isDarkMode = !this.isDarkMode
+        }
     }
 }
 </script>
