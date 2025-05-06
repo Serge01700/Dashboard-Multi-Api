@@ -1,14 +1,10 @@
 // stores/auth.js
 import { defineStore } from 'pinia';
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-
-// Configuration de l'URL de base de l'API
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import apiClient from '@/services/axios-config';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    // État initial de l'authentification
     user: null,
     token: null,
     loading: false,
@@ -16,20 +12,14 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    // Vérifier si l'utilisateur est connecté
     isAuthenticated: (state) => !!state.token && !!state.user,
-    
-    // Récupérer l'utilisateur actuel
     currentUser: (state) => state.user,
-    
-    // Vérifier si l'utilisateur a un rôle spécifique
     hasRole: (state) => (role) => {
       return state.user?.roles?.includes(role) || false;
     }
   },
 
   actions: {
-    // Initialisation du store à partir du stockage local
     async init() {
       this.loading = true;
       
@@ -44,12 +34,11 @@ export const useAuthStore = defineStore('auth', {
         
         if (token) {
           // Vérifier si le token est valide et non expiré
-          const decoded = jwt_decode(token);
+          const decoded = jwtDecode(token); // Correction: utilisation de jwtDecode au lieu de jwt_decode
           
           if (decoded.exp * 1000 > Date.now()) {
-            // Token valide, configurer Axios avec le token
+            // Token valide
             this.token = token;
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             
             // Récupérer les infos utilisateur depuis le token
             this.user = {
@@ -58,6 +47,15 @@ export const useAuthStore = defineStore('auth', {
               name: decoded.name,
               roles: decoded.roles || []
             };
+            
+            // Vérifier si l'utilisateur existe toujours sur le serveur (facultatif)
+            try {
+              const response = await apiClient.get('/users/profile');
+              // Mettre à jour les informations utilisateur si nécessaire
+              this.user = response.data;
+            } catch (profileError) {
+              console.warn('Impossible de récupérer le profil, utilisation des données du token');
+            }
           } else {
             // Token expiré, supprimer les données
             this.logout();
@@ -71,14 +69,15 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     
-    // Connexion utilisateur
     async login({ email, password, rememberMe }) {
       this.loading = true;
       this.error = null;
       
       try {
+        console.log('Tentative de connexion pour:', email);
+        
         // Appel à l'API de connexion
-        const response = await axios.post(`${API_URL}/auth/login`, {
+        const response = await apiClient.post('/auth/login', {
           email,
           password
         });
@@ -86,15 +85,14 @@ export const useAuthStore = defineStore('auth', {
         const { token, user } = response.data;
         
         if (token) {
+          console.log('Connexion réussie');
+          
           // Stocker le token selon l'option "Remember me"
           if (rememberMe) {
             localStorage.setItem('authToken', token);
           } else {
             sessionStorage.setItem('authToken', token);
           }
-          
-          // Configurer Axios pour les futures requêtes
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           
           // Mettre à jour l'état
           this.token = token;
@@ -108,7 +106,16 @@ export const useAuthStore = defineStore('auth', {
         console.error('Login error:', error);
         
         // Extraire le message d'erreur de la réponse API
-        const message = error.response?.data?.message || 'Échec de la connexion';
+        let message = 'Échec de la connexion';
+        
+        if (!error.response) {
+          message = 'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
+        } else if (error.response.status === 401) {
+          message = 'Email ou mot de passe incorrect';
+        } else if (error.response?.data?.message) {
+          message = error.response.data.message;
+        }
+        
         this.error = message;
         
         return { success: false, message };
@@ -116,37 +123,110 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false;
       }
     },
-    
-    // Déconnexion utilisateur
+
+    async register({ email, password, name }) {
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        console.log('Tentative d\'inscription pour:', email);
+        
+        // Appel à l'API d'inscription
+        const response = await apiClient.post('/auth/register', {
+          email,
+          password,
+          name
+        });
+        
+        const { token, user } = response.data;
+        
+        if (token) {
+          console.log('Inscription réussie');
+          
+          // Stocker le token dans le sessionStorage
+          sessionStorage.setItem('authToken', token);
+          
+          // Mettre à jour l'état
+          this.token = token;
+          this.user = user;
+          
+          return { success: true, user };
+        }
+        
+        return { 
+          success: false, 
+          message: 'Erreur lors de l\'inscription' 
+        };
+      } catch (error) {
+        console.error('Register error:', error);
+        
+        // Gestion des erreurs spécifiques
+        let message = 'Erreur lors de l\'inscription';
+        
+        if (!error.response) {
+          message = 'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
+        } else if (error.response?.status === 409) {
+          message = 'Cet email est déjà utilisé';
+        } else if (error.response?.data?.message) {
+          message = error.response.data.message;
+        }
+        
+        this.error = message;
+        return { success: false, message };
+      } finally {
+        this.loading = false;
+      }
+    },
+  
+    // Le reste du code reste inchangé
+    validateRegistrationData({ email, password, name }) {
+      const errors = {};
+      
+      // Validation de l'email
+      if (!email || !email.includes('@')) {
+        errors.email = 'Email invalide';
+      }
+      
+      // Validation du mot de passe
+      if (!password || password.length < 8) {
+        errors.password = 'Le mot de passe doit contenir au moins 8 caractères';
+      }
+      
+      // Validation du nom
+      if (!name || name.trim().length < 2) {
+        errors.name = 'Le nom doit contenir au moins 2 caractères';
+      }
+      
+      return {
+        isValid: Object.keys(errors).length === 0,
+        errors
+      };
+    },
+
     logout() {
       // Supprimer le token des stockages
       localStorage.removeItem('authToken');
       sessionStorage.removeItem('authToken');
       
-      // Ne pas supprimer l'email mémorisé pour la fonctionnalité "Remember me"
-      
-      // Supprimer le token de l'en-tête d'autorisation
-      delete axios.defaults.headers.common['Authorization'];
-      
       // Réinitialiser l'état
       this.token = null;
       this.user = null;
       this.error = null;
+      
+      console.log('Déconnexion effectuée');
     },
     
-    // Vérifier si le token est toujours valide
     checkTokenValidity() {
       if (!this.token) return false;
       
       try {
-        const decoded = jwt_decode(this.token);
+        const decoded = jwtDecode(this.token);
         return decoded.exp * 1000 > Date.now();
       } catch {
         return false;
       }
     },
     
-    // Mettre à jour le profil utilisateur
     async updateProfile(userData) {
       if (!this.isAuthenticated) {
         throw new Error('Utilisateur non authentifié');
@@ -155,7 +235,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true;
       
       try {
-        const response = await axios.put(`${API_URL}/users/profile`, userData);
+        const response = await apiClient.put('/users/profile', userData);
         this.user = { ...this.user, ...response.data };
         return { success: true, user: this.user };
       } catch (error) {
