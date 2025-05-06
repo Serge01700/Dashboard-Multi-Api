@@ -89,5 +89,7 @@ export const authService = {
   }
 };
 
+authService.login({ email, password });
+
 // Exporter le client HTTP pour une utilisation dans d'autres services
 export default httpClient;
