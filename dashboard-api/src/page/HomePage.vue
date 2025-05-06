@@ -6,6 +6,7 @@
         <router-link to="/" class="active">Home</router-link>
         <router-link to="/dashboard/settings">About us</router-link>
         <router-link to="/login">Sign-in</router-link>
+        <router-link to="/register">Sign-up</router-link>
       </nav>
     </header>
     <main>

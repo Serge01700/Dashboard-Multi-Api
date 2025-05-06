@@ -15,5 +15,7 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router)
 
+
+
 app.config.globalProperties.$axios = axios;
 app.mount('#app')
