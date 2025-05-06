@@ -1,17 +1,13 @@
-// services/axios-config.js
 import axios from 'axios';
 
-// Récupérer l'URL de l'API depuis les variables d'environnement
+// Récupérer l'URL de l'API
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Créer une instance Axios avec une configuration de base
 const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  },
-  timeout: 10000 // 10 secondes
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  timeout: 10000,
+  withCredentials: false
 });
 
 // Intercepteur pour les requêtes
@@ -51,9 +47,8 @@ apiClient.interceptors.response.use(
         // Supprimer le token et rediriger vers la page de connexion
         localStorage.removeItem('authToken');
         sessionStorage.removeItem('authToken');
-        
-        // Si vous utilisez Vue Router, vous pouvez rediriger ici
-        // router.push('/login');
+
+         router.push('/login');
       }
     } else if (error.request) {
       // La requête a été faite mais aucune réponse n'a été reçue
