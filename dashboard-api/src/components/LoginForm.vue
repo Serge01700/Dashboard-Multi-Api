@@ -11,7 +11,8 @@
         {{ errorMessage }}
       </div>
 
-      <div class="w-full">
+      <!-- Email -->
+      <div class="w-full text-black">
         <input
           type="email"
           class="w-full p-2 rounded border"
@@ -22,7 +23,8 @@
         />
       </div>
 
-      <div class="w-full relative">
+      <!-- Mot de passe -->
+      <div class="w-full relative text-black">
         <input
           :type="showPassword ? 'text' : 'password'"
           class="w-full p-2 rounded border"
