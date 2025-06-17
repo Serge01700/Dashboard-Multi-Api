@@ -2,7 +2,7 @@
 <template>
 
     <div 
-      class="relative z-20 w-full max-w-md p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border"
+      class="relative z-20 w-full max-w-sm p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border"
       :class="[
         isDarkMode 
           ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -13,9 +13,9 @@
       <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">April 29, Tues</p>
       <p class="where text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Lyon</p>
       
-      <h2 class="mt-5 text-8xl font-semibold" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">18°C</h2>
+      <h2 class="mt-5 text-6xl font-semibold" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">18°C</h2>
       
-      <section class="grid grid-cols-3 gap-4">
+      <section class="grid grid-cols-3 gap-2">
     
         <section class="bullet-point-weather flex">
           <BulletPoint 
