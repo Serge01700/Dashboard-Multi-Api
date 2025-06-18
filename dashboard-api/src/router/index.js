@@ -36,7 +36,12 @@ const routes = [
                    path: 'settings',
                    name: 'DashboardSetting',
                    component : () => import('@/page/DashboardSettings.vue')
-                   
+               },
+
+               {
+                   path: 'todo',
+                   name: 'TodoPage',
+                   component : () => import('@/page/TodoPage.vue')
                }
            ]
     }
