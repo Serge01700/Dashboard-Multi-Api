@@ -5,7 +5,9 @@
         class="absolute w-[100vh] h-[100vh] rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 transition-opacity duration-500 opacity-0 will-change-auto">
    </div>
    <Sidebar :isDarkMode="isDarkMode" />
-   <RouterView :isDarkMode="isDarkMode" /> <!-- Supprimez le slot -->
+   <div class="flex-1 pl-[152px]">
+    <RouterView :isDarkMode="isDarkMode" /></div>
+   
    <div class="absolute bottom-4 right-4 z-30">
      <button 
        class="p-2 rounded-full transition-colors duration-300"
