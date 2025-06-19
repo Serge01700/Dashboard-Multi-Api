@@ -10,7 +10,8 @@
     ]"
   >
       <!-- En-tête -->
-      <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">April 29, Tues</p>
+      <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">{{ month }} 29, Tues</p>
+      <span>{{ dayNumber }}</span>
       <p class="where text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Lyon</p>
       
       <h2 class="mt-5 text-6xl font-semibold" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">18°C</h2>
@@ -72,8 +73,7 @@
 </template>
 
 <script>
-
-
+import { computed, ref } from 'vue'
 import BulletPoint from './BulletPoint.vue'
 export default {
   name: 'WidgetWeatherHome',
@@ -87,6 +87,14 @@ export default {
     }
   }
 }
+
+const dayLetter = computed(() => 
+   new Date().toLocaleDateString('en-EN', { weekday: 'long' }));
+
+const dayNumber = computed(() => new Date().getDate());
+
+const month = computed(() => new Date().toLocaleDateString('en-EN', { month: 'long' }));
+
 </script>
 
 <style>
