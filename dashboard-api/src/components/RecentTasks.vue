@@ -14,10 +14,10 @@
       </p>
       <div class="flex items-center justify-between">
         <h3 class="text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
-          Tâches Récentes
+          Recent Tasks
         </h3>
-        <router-link to="/dashboard/todo" class="text-sm font-medium transition-colors">
-          Voir tout
+        <router-link to="todo" class="text-sm font-medium transition-colors">
+          All
         </router-link>
       </div>
     </div>
@@ -73,7 +73,7 @@ export default {
   },
   computed: {
     currentDate() {
-      return new Date().toLocaleDateString('fr-FR', {
+      return new Date().toLocaleDateString('en-EN', {
         month: 'long',
         day: 'numeric',
         weekday: 'short'
@@ -97,7 +97,7 @@ export default {
       }
     },
     formatDate(date) {
-      return new Date(date).toLocaleDateString('fr-FR', {
+      return new Date(date).toLocaleDateString('en-EN', {
         day: 'numeric',
         month: 'short'
       });
