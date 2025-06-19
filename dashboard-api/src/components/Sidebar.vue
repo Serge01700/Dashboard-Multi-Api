@@ -1,8 +1,5 @@
 <template>
 
-  <div>
-    
-  </div>
   <div class="absolute top-[100px] left-[152px] w-full h-[2px] bg-gray-700">
 
  </div>
@@ -26,7 +23,7 @@
  </div>
 </template>
 
-<script  setup>
+<script setup>
 defineProps({
   isDarkMode:{
     type: Boolean,
