@@ -1,4 +1,3 @@
-// stores/auth.js
 import { defineStore } from 'pinia';
 import { jwtDecode } from 'jwt-decode';
 import apiClient from '@/services/axios-config';

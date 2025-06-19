@@ -4,7 +4,7 @@
     <!-- En-tête -->
     <header class="w-full">
       <TopHomeDashboard :isDarkMode="isDarkMode" />
-      
+      <TimeTraker class="flex-end" :isDarkMode="isDarkMode" />
     </header>
 
     <!-- Zone de contenu principal -->
@@ -13,12 +13,15 @@
         <!-- Widgets -->
         <WidgetWeatherHome :isDarkMode="isDarkMode" />
         <RecentTasks :isDarkMode="isDarkMode" />
+        
       </div>
+      
     </main>
   </div>
 </template>
 
 <script setup>
+import TimeTraker from '@/components/TimeTraker.vue';
 import WidgetWeatherHome from '@/components/WidgetWeatherHome.vue';
 import RecentTasks from '@/components/RecentTasks.vue';
 import TopHomeDashboard from '@/components/TopHomeDashboard.vue';
