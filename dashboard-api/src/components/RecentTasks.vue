@@ -1,12 +1,13 @@
 <template>
   <div 
-    class="relative z-20 w-full max-w-sm p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border"
+    class="relative z-20 w-full max-w-sm p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border h-[250px] flex flex-col" 
     :class="[
       isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
         : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'
     ]"
   >
+    <!-- En-tête fixe -->
     <div class="mb-6">
       <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
         {{ currentDate }}
@@ -15,43 +16,42 @@
         <h3 class="text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
           Tâches Récentes
         </h3>
-        <router-link 
-          to="/dashboard/todo" 
-          class="text-sm font-medium transition-colors"
-          :class="isDarkMode ? 'text-dark-text-secondary hover:text-dark-text-primary' : 'text-light-text-secondary hover:text-light-text-primary'"
-        >
+        <router-link to="/dashboard/todo" class="text-sm font-medium transition-colors">
           Voir tout
         </router-link>
       </div>
     </div>
     
-    <div class="space-y-3">
-      <div v-for="(task, index) in recentTasks" :key="index"
-           class="flex items-center justify-between p-3 rounded-lg transition-all duration-300"
-           :class="isDarkMode ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'">
-        <div class="flex items-center gap-3">
-          <input 
-            type="checkbox" 
-            v-model="task.completed"
-            @change="updateTask(index)"
-            class="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
-          />
-          <span :class="[
-            task.completed ? 'line-through' : '',
-            isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'
-          ]">
-            {{ task.text }}
+    <!-- Zone scrollable -->
+    <div class="flex-1 overflow-y-auto pr-2">
+      <div class="space-y-3">
+        <div v-for="(task, index) in recentTasks" :key="index"
+             class="flex items-center justify-between p-3 rounded-lg transition-all duration-300"
+             :class="isDarkMode ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'">
+          <div class="flex items-center gap-3">
+            <input 
+              type="checkbox" 
+              v-model="task.completed"
+              @change="updateTask(index)"
+              class="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+            />
+            <span :class="[
+              task.completed ? 'line-through' : '',
+              isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'
+            ]">
+              {{ task.text }}
+            </span>
+          </div>
+          <span class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
+            {{ formatDate(task.date) }}
           </span>
         </div>
-        <span class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
-          {{ formatDate(task.date) }}
-        </span>
-      </div>
-      
-      <div v-if="recentTasks.length === 0" 
-           class="text-center py-3"
-           :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
-        Aucune tâche récente
+        
+        <div v-if="recentTasks.length === 0" 
+             class="text-center py-3"
+             :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
+          Aucune tâche récente
+        </div>
       </div>
     </div>
   </div>
@@ -142,4 +142,22 @@ export default {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-</style> 
+
+/* Personnalisation de la scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.5);
+}
+</style>
