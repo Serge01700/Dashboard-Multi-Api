@@ -1,6 +1,9 @@
 <template>
     <figure  class="bullet-point flex items-center w-20 h-10 justify-center rounded-full ">
-        <img :style="{ width: size, height:size}"  class="object-contain w-full h-full" :src="image" >
+        <img 
+        v-if="image"
+        :style="{ width: size, height:size}"  class="object-contain w-full h-full" :src="image" >
+        <slot v-else/>
     </figure>
   
 </template>
