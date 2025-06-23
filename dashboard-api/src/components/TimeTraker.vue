@@ -6,21 +6,22 @@
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
         : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'
     ]"
-  >
+   >
     
     <div class="header">
       <div class="clock-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" :stroke="isDarkMode ? '#ffffff' : '#2D3748'" stroke-width="2">
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12,6 12,12 16,14"/>
         </svg>
       </div>
       <h1 class="title"
-        :class="[isDarkMode ? 'text-white' : 'text-dark-text-primary']">Time tracker</h1>
+        :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">Time tracker</h1>
     </div>
     
     <div class="content">
-      <div class="time-display">
+      <div class="time-display"
+         :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
         {{ formattedTime }}
       </div>
       
@@ -118,10 +119,10 @@ body {
 .time-tracker {
   
   border-radius: 28px;
-  padding: 24px 28px;
-  width: 360px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  border: 1px solid #3a4551;
+  padding: 15px 28px;
+  width: 399px;
+  /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); */
+  /* border: 1px solid #3a4551; */
 }
 
 .header {
@@ -145,7 +146,7 @@ body {
 
 .title {
   /* color: #ffffff; */
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.02em;
 }
@@ -157,9 +158,9 @@ body {
 }
 
 .time-display {
-  font-size: 56px;
+  font-size: 46px;
   font-weight: 300;
-  color: #ffffff;
+  /* color: #ffffff; */
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -172,8 +173,8 @@ body {
 }
 
 .control-btn {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border: none;
   border-radius: 50%;
   background: #3a4551;
@@ -196,8 +197,8 @@ body {
 }
 
 .pause-icon {
-  width: 14px;
-  height: 18px;
+  width: 12px;
+  height: 16px;
   background: linear-gradient(to right, 
       #ffffff 0%, #ffffff 28%, 
       transparent 28%, transparent 72%, 
@@ -214,8 +215,8 @@ body {
 }
 
 .stop-icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: #ffffff;
   border-radius: 3px;
 }
