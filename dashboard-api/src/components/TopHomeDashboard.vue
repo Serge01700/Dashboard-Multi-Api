@@ -30,7 +30,7 @@
                 'px-4 py-2 rounded-3xl transition-all duration-300  text-white cursor-pointer'  ,
                isDarkMode 
                     ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
-                    : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover text-dark' ,
+                    : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover text-light-text-primary' ,
                             
               'hover:shadow-dark-shadow-hover'
             ]">Show my tasks <span>&#8594;</span>
