@@ -12,6 +12,7 @@
 :root {
   /* Thème sombre */
   --color-sidebar: #1f28338e;
+  --color-bg-dark : #adb2ba2b; 
   --color-dark-bg: #0B0C10;
   --color-dark-card: rgba(135, 164, 210, 0.15);
   --color-dark-border: rgba(255, 255, 255, 0.08);
@@ -42,6 +43,10 @@
 
 .bg-dark {
   background-color: var(--color-dark-bg);
+}
+
+.bg-dark-2{
+  background-color: var(--color-bg-dark)
 }
 
 .bg-light {
@@ -110,4 +115,24 @@
 
 .hover\:shadow-light-shadow-hover:hover {
   box-shadow: 0 12px 40px 0 var(--color-light-shadow-hover);
+}
+
+
+/* PERSONALISATION DE SCROLLBAR */
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.5);
 }
