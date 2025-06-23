@@ -33,7 +33,7 @@
                     : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover text-dark' ,
                             
               'hover:shadow-dark-shadow-hover'
-            ]">Show my tasks <span>&#8594</span>
+            ]">Show my tasks <span>&#8594;</span>
                     </button>
                 </router-link>
                 
