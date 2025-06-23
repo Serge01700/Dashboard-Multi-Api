@@ -1,6 +1,6 @@
 <template>
   <div
-    class="time-tracker border rounded-3xl p-6 w-[360px]"
+    class="time-tracker border rounded-3xl w-[360px]"
     :class=" [
       isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -119,8 +119,8 @@ body {
 .time-tracker {
   
   border-radius: 28px;
-  padding: 15px 28px;
-  width: 399px;
+  padding: 14px 14px;
+  width: 349px;
   /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); */
   /* border: 1px solid #3a4551; */
 }
