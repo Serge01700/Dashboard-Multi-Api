@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="relative z-20 w-full max-w-sm p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border h-[250px] flex flex-col" 
+    class="relative z-20 w-full max-w-lg p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border h-[250px] md:h-[210px] flex flex-col" 
     :class="[
       isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -9,11 +9,11 @@
   >
     <!-- En-tête fixe -->
     <div class="mb-6">
-      <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
+      <p class="date ml-1 mb-1 text-base md:text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
         {{ currentDate }}
       </p>
       <div class="flex items-center justify-between">
-        <h3 class="text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
+        <h3 class="text-2xl md:text-lg font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
           Recent Tasks
         </h3>
         <router-link to="todo" class="text-sm font-medium transition-colors">
@@ -143,21 +143,6 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Personnalisation de la scrollbar */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 4px;
-}
 
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: transparent;
-}
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.3);
-  border-radius: 2px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(156, 163, 175, 0.5);
-}
 </style>
