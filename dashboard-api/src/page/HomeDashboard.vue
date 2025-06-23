@@ -2,9 +2,9 @@
   <!-- Container principal -->
   <div class="flex flex-col h-full">
     <!-- En-tête -->
-    <header class="w-full">
+    <header class="w-full flex justify-between items-center">
       <TopHomeDashboard :isDarkMode="isDarkMode" />
-      <TimeTraker class="flex-end" :isDarkMode="isDarkMode" />
+      <TimeTraker  :isDarkMode="isDarkMode" />
     </header>
 
     <!-- Zone de contenu principal -->
@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+import ApiMetric from '@/components/ApiMetric.vue';
 import TimeTraker from '@/components/TimeTraker.vue';
 import WidgetWeatherHome from '@/components/WidgetWeatherHome.vue';
 import RecentTasks from '@/components/RecentTasks.vue';
