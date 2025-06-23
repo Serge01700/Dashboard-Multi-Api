@@ -47,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
               roles: decoded.roles || []
             };
             
-            // Vérifier si l'utilisateur existe toujours sur le serveur (facultatif)
+            // Vérifier si l'utilisateur existe toujours sur le serveur 
             try {
               const response = await apiClient.get('/users/profile');
               // Mettre à jour les informations utilisateur si nécessaire
