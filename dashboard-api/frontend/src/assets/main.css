@@ -13,6 +13,7 @@
   /* Thème sombre */
   --color-sidebar: #1f28338e;
   --color-bg-dark : #adb2ba2b; 
+  --active-bg: #25385c;
   --color-dark-bg: #0B0C10;
   --color-dark-card: rgba(135, 164, 210, 0.15);
   --color-dark-border: rgba(255, 255, 255, 0.08);
@@ -35,6 +36,7 @@
   --color-light-shadow: rgba(135, 164, 210, 0.2);
   --color-light-shadow-hover: rgba(135, 164, 210, 0.3);
   --color-light-ellipse: #87A4D2;
+  --color-light-text-black: #000000;
 }
 
 .bg-dark-sidebar{
@@ -43,6 +45,13 @@
 
 .bg-dark {
   background-color: var(--color-dark-bg);
+}
+
+.bg-active {
+  background-color: var(--active-bg) ;
+  border-right: 2px solid #0164F8;
+  color: white;
+  
 }
 
 .bg-dark-2{
@@ -117,6 +126,9 @@
   box-shadow: 0 12px 40px 0 var(--color-light-shadow-hover);
 }
 
+.text-light-text-black {
+  color: var(--color-light-text-black);
+}
 
 /* PERSONALISATION DE SCROLLBAR */
 
