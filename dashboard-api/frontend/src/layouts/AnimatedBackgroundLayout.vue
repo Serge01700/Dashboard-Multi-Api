@@ -72,8 +72,8 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: inherit; /* Hérite de l'image de fond */
-  opacity: 0.3; /* Ajuste l'opacité de l'image */
+  background: inherit; 
+  opacity: 0.3; 
   z-index: -1; 
 }
 
@@ -135,7 +135,7 @@ onMounted(() => {
       bottom: 0;
       border-radius: 50px;
       filter: blur(9px);
-      opacity: 0.6; /* Légèrement plus opaque */
+      opacity: 0.6; 
       animation: moveUpDown  linear infinite alternate;
       transform-origin: bottom;
     }
