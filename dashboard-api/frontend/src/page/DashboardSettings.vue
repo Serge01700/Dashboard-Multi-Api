@@ -5,8 +5,8 @@
     <h1 class="mx-4 pt-3 pb-3 text-2xl font-thin "
       :class="[ isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">Settings</h1>
       
-      <ul class=" flex flex-row md:flex-col gap-2">
-        <li
+      <ul class="flex flex-row md:flex-col gap-2">
+        <li class="px-4 py-2"
          v-for="item in menuItems"
          :key="item.id"
          :class="[
@@ -23,27 +23,42 @@
         
       </ul>
     </nav>
-    <main class="content-settings flex-1 ml-0 md:ml-4">
-      <p class="text-2xl font-thin"
+    <main class="content-settings flex-1 px-9  ml-0 md:ml-4">
+      <p class="text-2xl font-thin p-4"
       :class="[ isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">Account</p>
       <div class="flex flex-col gap-2">
-        <div class="flex flex-col sm:flex-row gap-2 items-center sm:items-start">
+        <div class="flex flex-col sm:flex-row gap-2 items-center sm:items-center">
+
+          <!-- IMG PROFIL -->
             <p class="rounded-full bg-dark-card w-[100px] h-[100px] md:w-[150px] md:h-[150px]"></p>
-            <div class="flex flex-col gap-2">
-                <p class=" border text-md font-thin mx-auto  px-4 py-1 rounded-2xl"
+
+         
+
+            <div class="flex flex-col gap-2 ml-7 justify-center">
+
+              <!-- ROLE -->
+
+                <p class=" border text-md text-center w-[90px] font-thin text-left  rounded-2xl"
                 :class="[ isDarkMode ? 'border-dark-border text-dark-text-primary bg-dark-card' : 'border-light-border  text-light-text-primary bg-light-card']">Owner</p>
+
+                   <!-- NAME -->
                 <p :class="[ isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary', ]"
                 >GRIGORIAN Serge</p>
             </div>    
         </div>
+        
         <form @submit.prevent="submitForm" class="w-full">
 
           <!-- NAME -->
 
           <div class="flex flex-col md:flex-row gap-4 mt-4 w-full">
             <div class="form-group flex flex-col gap-2 w-full md:w-1/2">
-              <label for="name">Name</label>
-              <input class="w-full max-w-xs md:max-w-lg" type="name" id="name"
+              <label 
+              :class="[
+                isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'
+               ]"
+              for="name">Name</label>
+              <input class="w-full md:max-w-lg" type="name" id="name"
               :class="[
                       isDarkMode 
                         ? 'bg-dark-card  border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -54,9 +69,13 @@
               <!-- EMAIL -->
 
             <div class="form-group flex flex-col gap-2 w-full md:w-1/2">
-              <label for="email">Email</label>
+              <label
+               :class="[
+                isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'
+               ]"
+               for="email">Email</label>
                 <input type="email" id="email" 
-                class="w-full max-w-xs md:max-w-lg"
+                class="w-full md:max-w-lg"
                 :class="[
                         isDarkMode 
                           ? 'bg-dark-card  border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -73,12 +92,12 @@
                 :class="[
                   'absolute top-5 left-2 z-10 w-10 h-10',
                   isDarkMode ? 'bg-dark-card' : 'bg-dark',
-                  'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
+                  'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover', 'cursor-pointer'
                 ]" 
                 :image="'/src/assets/img/icons8-cadenas-60.png'"
                 size="20px"/>
               <input 
-                class="psw h-[120px] pl-10 w-full max-w-xs md:max-w-lg" 
+                class="psw h-[120px] pl-10 w-full  md:max-w-lg" 
                 type="password" 
                 id="password" 
                 :class="[
@@ -108,7 +127,7 @@
                 isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'
               ]">
                 <p class="text-3xl">Delete account</p>
-                <p>Contact our support team to process deletion of your account</p>
+                <p class="text-xs">Contact our support team to process deletion of your account</p>
             </div>
           </div>
 
@@ -152,11 +171,12 @@ function setActiveItem(item) {
 }
 
 
+
 input{
   border: 1px solid var(--color-light-border);
   border-radius: 0.75rem;
   width: 100%;
-  max-width: 450px;
+  /* max-width: 450px; */
   padding: 6px;
 }
 
