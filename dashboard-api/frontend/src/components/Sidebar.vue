@@ -1,9 +1,10 @@
 <template>
-  <nav :class="[
-    'flex justify-center flex-col border p-2 w-[50px] rounded-3xl relative',
+  <nav
+    :class="[
+    'flex justify-center flex-row md:flex-col border p-2 w-auto md:w-[50px] rounded-3xl relative',
     isDarkMode ? 'bg-dark-card border-dark-border' : 'bg-dark border-light-border'
-  ]">
-    <ul class="space-y-2">
+   ]">
+    <ul class="flex flex-row md:flex-col space-y-0 md:space-y-2 space-x-2 md:space-x-0">
       <li v-for="(item, index) in menuItems" 
           :key="index" 
           class="relative p-2 rounded-full transition-all duration-300 group">
