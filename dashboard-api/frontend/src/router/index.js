@@ -35,14 +35,20 @@ const routes = [
                {
                    path: 'settings',
                    name: 'DashboardSetting',
-                   component : () => import('@/page/DashboardSettings.vue')
+                   component : () => import('@/page/SettingsDashboard.vue')
                },
 
                {
                    path: 'todo',
                    name: 'TodoPage',
                    component : () => import('@/page/TodoPage.vue')
+               },
+               {
+                   path: 'mail',
+                   name: 'MailPage',
+                   component : () => import('@/page/MailDashboard.vue')
                }
+
            ]
     }
 
