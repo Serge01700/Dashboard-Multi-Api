@@ -34,12 +34,12 @@ const menuItems = [
   { icon: 'icons8-météo-pomme-50.png', alt: 'Weather' },
   { icon: 'icons8-to-do-100.png', alt: 'Todo' },
   { icon: 'icons8-email-96.png', alt: 'Email' },
-  { icon: 'icons8-settings-100.png', alt: 'Settings' }
+  { icon: 'icons8-settings-100.png', alt: 'Settings' , path:'settings'}
 ];
 </script>
 
 <style scoped>
-/* Personnalisation du hover glassmorphism */
+
 li > img {
   height: 24 px;
   object-fit: contain;
