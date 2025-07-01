@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
+import oauth2Client, { getAuthUrl } from '../config/oauth2Client.js';
 
 const router = express.Router();
 
@@ -84,6 +85,43 @@ router.post('/register', async (req, res) => {
     console.error('Register error:', error);
     res.status(500).json({ message: error.message });
   }
+});
+
+// Route pour initier l'authentification Gmail
+router.get('/gmail/login', (req, res) => {
+  const authUrl = getAuthUrl();
+  res.redirect(authUrl);
+});
+
+// Callback pour l'authentification Gmail
+router.get('/gmail/callback', async (req, res) => {
+  const { code, state } = req.query;
+  try {
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+    
+    // Stocker les tokens dans la session
+    req.session.gmailTokens = tokens;
+    
+    // Utiliser l'URL de redirection du state ou l'URL par défaut
+    const redirectUrl = state ? decodeURIComponent(state) : process.env.FRONTEND_URL + '/mail';
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error('Erreur lors de l\'authentification Gmail:', error);
+    res.redirect(process.env.FRONTEND_URL + '/mail?error=auth_failed');
+  }
+});
+
+// Route pour vérifier l'état de l'authentification
+router.get('/gmail/status', (req, res) => {
+  const tokens = req.session.gmailTokens;
+  const isAuthenticated = !!tokens && !!tokens.access_token;
+  
+  if (isAuthenticated) {
+    oauth2Client.setCredentials(tokens);
+  }
+  
+  res.json({ isAuthenticated });
 });
 
 export default router;
