@@ -11,9 +11,21 @@
         <div class="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
              :class="isDarkMode ? 'bg-white/10 backdrop-blur-sm' : 'bg-black/10 backdrop-blur-sm'">
         </div>
-        <img :src="getImageUrl(item.icon)" 
-             :alt="item.alt"
-             class="relative z-10 h-6 w-6 transition-transform duration-300 group-hover:scale-110">
+        <router-link
+          v-if="item.path"
+          :to="item.path"
+          class="relative z-10 flex items-center justify-center"
+          style="display: flex;"
+        >
+          <img :src="getImageUrl(item.icon)" 
+               :alt="item.alt"
+               class="h-5 w-5 transition-transform duration-300 group-hover:scale-110">
+        </router-link>
+        <img
+          v-else
+          :src="getImageUrl(item.icon)" 
+          :alt="item.alt"
+          class="relative z-10 h-6 w-6 transition-transform duration-300 group-hover:scale-110">
       </li>
     </ul>
   </nav>
@@ -29,12 +41,12 @@ const getImageUrl = (name) => {
 }
 
 const menuItems = [
-  { icon: 'icons8-home-100.png', alt: 'Home' },
+  { icon: 'icons8-home-100.png', alt: 'Home', path: '/' },
   { icon: 'icons8-increase-100.png', alt: 'Stats' },
   { icon: 'icons8-calendrier-50.png', alt: 'Calendar' },
   { icon: 'icons8-météo-pomme-50.png', alt: 'Weather' },
-  { icon: 'icons8-to-do-100.png', alt: 'Todo' },
-  { icon: 'icons8-email-96.png', alt: 'Email' },
+  { icon: 'icons8-to-do-100.png', alt: 'Todo', path: 'todo' },
+  { icon: 'icons8-email-96.png', alt: 'Email', path: 'mail' },
   { icon: 'icons8-settings-100.png', alt: 'Settings' , path:'settings'}
 ];
 </script>
