@@ -19,7 +19,7 @@
   --color-dark-border: rgba(255, 255, 255, 0.08);
   --color-dark-text-primary: rgba(255, 255, 255, 0.9);
   --color-dark-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-dark-accent: rgba(62, 116, 255, 0.7);
+  --color-dark-accent: rgba(145, 146, 147, 0.7);
   --color-dark-accent-hover: rgba(62, 116, 255, 0.9);
   --color-dark-shadow: rgba(31, 38, 135, 0.15);
   --color-dark-shadow-hover: rgba(62, 116, 255, 0.1);
@@ -28,7 +28,7 @@
   /* Thème clair */
   --color-light-bg: #F5F7FA;
   --color-light-card: rgba(255, 255, 255, 0.7);
-  --color-light-border: rgba(255, 255, 255, 0.8);
+  --color-light-border: rgba(176, 176, 176, 0.944);
   --color-light-text-primary: #2D3748;
   --color-light-text-secondary: #4A5568;
   --color-light-accent: #87A4D2;
