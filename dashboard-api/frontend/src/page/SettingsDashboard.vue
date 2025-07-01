@@ -90,12 +90,12 @@
             <div class="relative w-full">
               <BulletPoint
                 :class="[
-                  'absolute top-5 left-2 z-10 w-10 h-10',
+                  'absolute top-5 left-2 z-10 w-7 h-7',
                   isDarkMode ? 'bg-dark-card' : 'bg-dark',
                   'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover', 'cursor-pointer'
                 ]" 
                 :image="'/src/assets/img/icons8-cadenas-60.png'"
-                size="20px"/>
+                size="14px"/>
               <input 
                 class="psw h-[120px] pl-10 w-full  md:max-w-lg" 
                 type="password" 
