@@ -37,4 +37,4 @@ coverage
 .env.*.local
 
 # Credentials
-backend/config/credentials.json
+dashboard-api/backend/config/credentials.json

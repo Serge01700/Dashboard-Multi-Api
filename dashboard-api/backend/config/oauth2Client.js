@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
-import fs from 'fs';
-import path from 'path';
 import { fileURLToPath } from 'url';
+import path from 'path';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -9,27 +8,15 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let credentials;
-try {
-  // Essayer de lire le fichier credentials.json
-  const credentialsPath = path.join(__dirname, 'credentials.json');
-  const credentialsFile = fs.readFileSync(credentialsPath);
-  credentials = JSON.parse(credentialsFile);
-  console.log('Credentials chargées avec succès');
-} catch (error) {
-  console.error('Erreur lors du chargement des credentials:', error);
-  throw new Error('Impossible de charger les credentials Gmail');
+// Vérifier que les variables d'environnement nécessaires sont présentes
+if (!process.env.GMAIL_CLIENT_ID || !process.env.GMAIL_CLIENT_SECRET) {
+  throw new Error('Les variables d\'environnement GMAIL_CLIENT_ID et GMAIL_CLIENT_SECRET sont requises');
 }
 
-const { client_id, client_secret } = credentials.web;
-const redirect_uri = process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/api/gmail/callback';
-
-console.log('Configuration OAuth2 avec redirect_uri:', redirect_uri);
-
 const oauth2Client = new google.auth.OAuth2(
-  client_id,
-  client_secret,
-  redirect_uri
+  process.env.GMAIL_CLIENT_ID,
+  process.env.GMAIL_CLIENT_SECRET,
+  process.env.GMAIL_REDIRECT_URI || 'http://localhost:3000/api/gmail/callback'
 );
 
 // Définir les scopes nécessaires pour l'API Gmail

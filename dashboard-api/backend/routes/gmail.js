@@ -2,7 +2,7 @@ import express from 'express';
 import { google } from 'googleapis';
 import fs from 'fs';
 import path from 'path';
-import oauth2Client from '../config/oauth2Client.js';
+import oauth2Client, { getAuthUrl } from '../config/oauth2Client.js';
 
 const router = express.Router();
 
@@ -38,16 +38,7 @@ router.get('/status', (req, res) => {
 // Route pour initier l'authentification Gmail
 router.get('/auth', (req, res) => {
   console.log('Démarrage de l\'authentification Gmail');
-  const SCOPES = [
-    'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/gmail.send',
-    'https://www.googleapis.com/auth/gmail.modify',
-  ];
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-    prompt: 'consent',
-  });
+  const authUrl = getAuthUrl();
   console.log('URL d\'authentification générée:', authUrl);
   res.redirect(authUrl);
 });
@@ -62,9 +53,9 @@ router.get('/callback', async (req, res) => {
   }
   try {
     console.log('Échange du code contre un token');
-    const { tokens } = await oAuth2Client.getToken(code);
+    const { tokens } = await oauth2Client.getToken(code);
     console.log('Token reçu:', tokens);
-    oAuth2Client.setCredentials(tokens);
+    oauth2Client.setCredentials(tokens);
     oauthToken = tokens;
     console.log('Token obtenu avec succès');
     
@@ -93,7 +84,7 @@ function ensureAuthenticated(req, res, next) {
     });
   }
   console.log('Token trouvé, configuration du client');
-  oAuth2Client.setCredentials(oauthToken);
+  oauth2Client.setCredentials(oauthToken);
   next();
 }
 
@@ -101,7 +92,7 @@ function ensureAuthenticated(req, res, next) {
 router.get('/mails', ensureAuthenticated, async (req, res) => {
   console.log('Récupération des mails');
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     let query = '';
     if (req.query.unread === 'true') query = 'is:unread';
     if (req.query.archived === 'true') query = '-in:inbox';
@@ -137,11 +128,11 @@ router.get('/mails', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// 4. Envoyer un mail
+// Envoyer un mail
 router.post('/send', ensureAuthenticated, async (req, res) => {
   console.log('Tentative d\'envoi de mail');
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     const { to, subject, content } = req.body;
 
     // Créer le message au format RFC 2822
@@ -181,11 +172,11 @@ router.post('/send', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// 5. Archiver un mail
+// Archiver un mail
 router.post('/archive/:id', ensureAuthenticated, async (req, res) => {
   console.log('Tentative d\'archivage du mail:', req.params.id);
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     await gmail.users.messages.modify({
       userId: 'me',
       id: req.params.id,
@@ -208,7 +199,7 @@ router.post('/archive/:id', ensureAuthenticated, async (req, res) => {
 router.delete('/mails/:id', ensureAuthenticated, async (req, res) => {
   console.log('Tentative de suppression du mail:', req.params.id);
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     await gmail.users.messages.trash({
       userId: 'me',
       id: req.params.id,
@@ -227,7 +218,7 @@ router.delete('/mails/:id', ensureAuthenticated, async (req, res) => {
 // Route pour télécharger une pièce jointe
 router.get('/attachment/:messageId/:attachmentId', async (req, res) => {
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     const { messageId, attachmentId } = req.params;
 
     const attachment = await gmail.users.messages.attachments.get({
@@ -259,7 +250,7 @@ router.get('/attachment/:messageId/:attachmentId', async (req, res) => {
 // Route pour afficher une image en ligne
 router.get('/image/:messageId/:attachmentId', async (req, res) => {
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     const { messageId, attachmentId } = req.params;
 
     const attachment = await gmail.users.messages.attachments.get({
@@ -289,7 +280,7 @@ router.get('/image/:messageId/:attachmentId', async (req, res) => {
 // Route pour récupérer les mails non lus
 router.get('/mails/unread', async (req, res) => {
   try {
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     const response = await gmail.users.messages.list({
       userId: 'me',
       q: 'is:unread',
