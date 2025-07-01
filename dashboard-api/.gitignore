@@ -28,3 +28,13 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Credentials
+backend/config/credentials.json
