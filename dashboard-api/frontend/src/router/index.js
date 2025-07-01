@@ -47,7 +47,12 @@ const routes = [
                    path: 'mail',
                    name: 'MailPage',
                    component : () => import('@/page/MailDashboard.vue')
-               }
+               },
+               {
+                path: 'calendar,',
+                name: 'calendarPage',
+                component : () => import('@/page/CalendarDashboard.vue')
+               },
 
            ]
     }
