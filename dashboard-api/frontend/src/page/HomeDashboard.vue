@@ -17,7 +17,7 @@
           <ApiMetric :isDarkMode="isDarkMode" />
           
         </div>
-        <CurrencyConverter class="mx-8" :isDarkMode="isDarkMode" />
+        <CurrencyConverter class="mx-8 w-full" :isDarkMode="isDarkMode" />
       </div>
     </main>
   </div>
