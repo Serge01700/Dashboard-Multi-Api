@@ -49,11 +49,15 @@ const routes = [
                    component : () => import('@/page/MailDashboard.vue')
                },
                {
-                path: 'calendar,',
+                path: 'calendar',
                 name: 'calendarPage',
                 component : () => import('@/page/CalendarDashboard.vue')
                },
-
+               {
+                path: 'bourse',
+                name: 'BoursePage',
+                component : () => import('@/page/BourseDashboard.vue')
+               },
            ]
     }
 
