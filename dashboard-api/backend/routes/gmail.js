@@ -1,6 +1,9 @@
 import express from 'express';
 import { google } from 'googleapis';
 import { oauth2Client, SCOPES } from '../config/oauth2Client.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
 
@@ -14,6 +17,18 @@ router.get('/status', (req, res) => {
 
 // Route pour initier l'authentification Gmail
 router.get('/auth', (req, res) => {
+  console.log('Variables d\'environnement Gmail:', {
+    clientId: process.env.GMAIL_CLIENT_ID,
+    redirectUri: process.env.GMAIL_REDIRECT_URI
+  });
+  
+  if (!process.env.GMAIL_CLIENT_ID) {
+    return res.status(500).json({ 
+      error: 'Configuration Gmail manquante',
+      details: 'GMAIL_CLIENT_ID non défini dans les variables d\'environnement'
+    });
+  }
+
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
