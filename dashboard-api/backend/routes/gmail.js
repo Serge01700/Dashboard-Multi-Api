@@ -76,7 +76,7 @@ router.get('/mails', ensureAuthenticated, async (req, res) => {
     const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     let query = '';
     if (req.query.unread === 'true') query = 'is:unread';
-    if (req.query.archived === 'true') query = '-in:inbox';
+    if (req.query.archived === 'true') query = '-in:inbox';   
     
     console.log('Requête Gmail avec query:', query);
     const response = await gmail.users.messages.list({
