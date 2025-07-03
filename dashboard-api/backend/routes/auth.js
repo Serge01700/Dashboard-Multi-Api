@@ -1,3 +1,4 @@
+
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
@@ -85,5 +86,6 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 export default router;

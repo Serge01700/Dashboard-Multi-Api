@@ -1,13 +1,14 @@
 import axios from 'axios';
+import router from '@/router';
 
 // Récupérer l'URL de l'API
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Créer une instance Axios avec une configuration de base
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: API_URL,
   timeout: 10000,
-  withCredentials: false
+  withCredentials: true
 });
 
 // Intercepteur pour les requêtes
@@ -43,12 +44,16 @@ apiClient.interceptors.response.use(
       console.error('Erreur API:', error.response.status, error.response.data);
       
       // Si le token est invalide ou expiré (401, 403)
-      if (error.response.status === 401 || error.response.status === 403) {
-        // Supprimer le token et rediriger vers la page de connexion
+      if (error.response.status === 401) {
+        // Si c'est une erreur d'authentification Gmail, rediriger vers l'URL d'auth Gmail
+        if (error.response.data.authUrl) {
+          window.location.href = `${API_URL}${error.response.data.authUrl}`;
+          return;
+        }
+        // Sinon, supprimer le token et rediriger vers la page de connexion
         localStorage.removeItem('authToken');
         sessionStorage.removeItem('authToken');
-
-         router.push('/login');
+        router.push('/login');
       }
     } else if (error.request) {
       // La requête a été faite mais aucune réponse n'a été reçue
