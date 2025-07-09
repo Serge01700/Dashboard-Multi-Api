@@ -9,13 +9,15 @@
 
     <!-- Zone de contenu principal -->
     <main class="flex-1">
-      <div class="grid  md:grid-cols-3 gap-5 px-2 ">
+      <div class="grid  md:grid-cols-3 gap-5 px-6 ">
         <!-- Widgets -->
         <WidgetWeatherHome :isDarkMode="isDarkMode" />
         <RecentTasks :isDarkMode="isDarkMode" />
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-4">
           <ApiMetric :isDarkMode="isDarkMode" />
+          
         </div>
+        <CurrencyConverter class="mx-8 w-full" :isDarkMode="isDarkMode" />
       </div>
     </main>
   </div>
@@ -27,6 +29,7 @@ import TimeTraker from '@/components/TimeTraker.vue';
 import WidgetWeatherHome from '@/components/WidgetWeatherHome.vue';
 import RecentTasks from '@/components/RecentTasks.vue';
 import TopHomeDashboard from '@/components/TopHomeDashboard.vue';
+import CurrencyConverter from '@/components/CurrencyConverter.vue';
 
 const props = defineProps({
   isDarkMode: {

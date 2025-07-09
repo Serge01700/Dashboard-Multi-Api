@@ -42,8 +42,8 @@ const getImageUrl = (name) => {
 
 const menuItems = [
   { icon: 'icons8-home-100.png', alt: 'Home', path: '/' },
-  { icon: 'icons8-increase-100.png', alt: 'Stats' },
-  { icon: 'icons8-calendrier-50.png', alt: 'Calendar' },
+  { icon: 'icons8-increase-100.png', alt: 'Stats', path: 'bourse' },
+  { icon: 'icons8-calendrier-50.png', alt: 'Calendar', path: 'calendar' },
   { icon: 'icons8-météo-pomme-50.png', alt: 'Weather' },
   { icon: 'icons8-to-do-100.png', alt: 'Todo', path: 'todo' },
   { icon: 'icons8-email-96.png', alt: 'Email', path: 'mail' },
