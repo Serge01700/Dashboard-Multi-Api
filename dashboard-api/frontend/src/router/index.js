@@ -58,6 +58,11 @@ const routes = [
                 name: 'BoursePage',
                 component : () => import('@/page/BourseDashboard.vue')
                },
+               {
+                path: 'weather',
+                name: 'WeatherPage',
+                component : () => import('@/page/WeatherDashboard.vue')
+               }
            ]
     }
 
