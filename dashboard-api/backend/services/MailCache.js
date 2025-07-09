@@ -1,6 +1,6 @@
 import NodeCache from 'node-cache';
 
-// Configuration du cache
+
 // stdTTL: temps de vie par défaut en secondes (ici 5 minutes)
 // checkperiod: période de vérification pour le nettoyage automatique (ici 10 minutes)
 const cache = new NodeCache({
