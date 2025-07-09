@@ -2,6 +2,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
@@ -87,5 +88,59 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Route pour obtenir les informations de l'utilisateur
+router.get('/user/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
+
+// Route pour mettre à jour les informations de l'utilisateur
+router.put('/user/:id', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const updateData = {};
+    
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
+
+// Route pour supprimer un utilisateur
+router.delete('/user/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    res.json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
 
 export default router;
