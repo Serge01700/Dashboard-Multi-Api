@@ -97,7 +97,7 @@ export const useAuthStore = defineStore('auth', {
           this.token = token;
           this.user = user;
           
-          return { success: true };
+          return { success: true, redirectTo: '/dashboard/home' };
         }
         
         return { success: false, message: 'Token non reçu du serveur' };

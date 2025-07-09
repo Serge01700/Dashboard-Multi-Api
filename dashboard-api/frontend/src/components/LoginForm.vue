@@ -133,9 +133,8 @@ export default {
           sessionStorage.removeItem('loginAttempts');
           sessionStorage.removeItem('lastLoginAttempt');
 
-          // Rediriger vers la page protégée ou la page d'accueil
-          const redirectPath = router.currentRoute.value.query.redirect || '/dashboard';
-          router.push(redirectPath);
+         
+          router.push(result.redirectTo || '/dashboard/home');
         } else {
           // En cas d'échec, augmenter le compteur de tentatives
           sessionStorage.setItem('loginAttempts', (loginAttempts + 1).toString());
