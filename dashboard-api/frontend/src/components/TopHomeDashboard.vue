@@ -38,15 +38,18 @@
                 </router-link>
                 
             <!-- CALENDRIER -->
-             <BulletPoint 
-            :class="[
-              'ml-4  w-9 cursor-pointer',
-              isDarkMode ? 'bg-dark-card' : 'bg-dark',
-              'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
-            ]"
-            :image="'/src/assets/img/icons8-calendrier-50.png'" 
-            size="20px"
-          />
+             <router-link to="/dashboard/calendar">
+                <BulletPoint 
+                    :class="[
+                    'ml-4  w-9 cursor-pointer',
+                    isDarkMode ? 'bg-dark-card' : 'bg-dark',
+                    'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
+                    ]"
+                    :image="'/src/assets/img/icons8-calendrier-50.png'" 
+                    size="20px"
+                />
+            </router-link>
+             
             <!-- <img class="" src="../assets/img/icons8-calendrier-50.png" alt=""> -->
             </div>
             
