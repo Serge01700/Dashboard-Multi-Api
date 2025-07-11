@@ -47,6 +47,7 @@ const menuItems = [
   { icon: 'icons8-météo-pomme-50.png', alt: 'Weather', path: 'weather' },
   { icon: 'icons8-to-do-100.png', alt: 'Todo', path: 'todo' },
   { icon: 'icons8-email-96.png', alt: 'Email', path: 'mail' },
+  { icon: 'icons8-notes-de-musique-100.png', alt: 'Musique', path: 'music' },
   { icon: 'icons8-settings-100.png', alt: 'Settings' , path:'settings'}
 ];
 </script>

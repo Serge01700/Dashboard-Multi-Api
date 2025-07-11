@@ -76,34 +76,12 @@
     </form>
 
     <vue-cal
-      ref="vuecal"
       style="height: 600px"
       :events="events"
       :time="false"
       default-view="month"
       :on-event-click="onEventClick"
       :class="isDarkMode ? 'bg-dark-card text-white' : 'bg-white text-gray-900'"
-      @event-drop="onEventDrop"
-      :drag-and-drop="true"
-      :editable-events="{ 
-        drag: true, 
-        resize: true, 
-        create: false, 
-        delete: false,
-        title: false 
-      }"
-      :snap-to-time="30"
-      :disable-views="['years', 'year']"
-      :events-on-month-view="'short'"
-      :events-count-on-year-view="true"
-      :cell-click-hold="false"
-      :on-event-drag-create="false"
-      :event-top-offset="0"
-      :events-drag-and-drop="{ 
-        enabled: true,
-        validateEvent: true,
-        createEvent: false
-      }"
     />
     <div v-if="selectedEvent" class="mt-6 p-4 rounded-lg shadow-lg"
          :class="isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'">
@@ -133,12 +111,6 @@ const props = defineProps({
   isDarkMode: Boolean
 })
 
-const vuecal = ref(null)
-
-const testEvents = ref([
-  { id: '1', title: 'Test', start: new Date(), end: new Date() }
-])
-
 const events = ref([])
 const selectedEvent = ref(null)
 const showForm = ref(false)
@@ -153,22 +125,12 @@ const form = ref({
 const fetchEvents = async () => {
   try {
     const res = await api.get('/events')
-    console.log('Events from API:', res.data);
-    
-    events.value = res.data.map(ev => {
-      const mappedEvent = {
-        _id: ev._id,
-        id: ev._id, // vue-cal utilise id
-        title: ev.title || '',
-        content: ev.content || '',
-        start: new Date(ev.start),
-        end: new Date(ev.end),
-        draggable: true,
-        resizable: true
-      };
-      console.log('Mapped event:', mappedEvent);
-      return mappedEvent;
-    })
+    events.value = res.data.map(ev => ({
+      ...ev,
+      id: ev._id,
+      start: new Date(ev.start),
+      end: new Date(ev.end)
+    }))
   } catch (e) {
     console.error('Erreur lors du chargement des événements:', e)
   }
@@ -178,7 +140,6 @@ const addEvent = async () => {
   try {
     await api.post('/events', form.value)
     showForm.value = false
-    // Vide le formulaire
     form.value = { title: '', content: '', start: '', end: '' }
     await fetchEvents()
   } catch (e) {
@@ -189,7 +150,6 @@ const addEvent = async () => {
 
 function onEventClick(event) {
   selectedEvent.value = event
-  // Pré-remplir le formulaire pour édition
   form.value = {
     title: event.title,
     content: event.content,
@@ -212,67 +172,6 @@ const updateEvent = async () => {
   }
 }
 
-const onEventDrop = async (data) => {
-  if(editMode.value) return;
-  
-  console.log('Event drop data complet:', {
-    data,
-    eventProps: data.event ? Object.keys(data.event) : 'No event',
-    eventData: data.event,
-    originalEvent: data.originalEvent
-  });
-
-  // Si data est un événement directement
-  const event = data.event || data;
-  
-  // Vérifier que l'événement existe
-  if (!event) {
-    console.error('Erreur: Événement manquant');
-    return;
-  }
-
-  console.log('Event properties:', {
-    id: event.id,
-    _id: event._id,
-    allProps: Object.keys(event),
-    fullEvent: event
-  });
-
-  // Vérifier que l'ID existe
-  const eventId = event._id || event.id;
-  if (!eventId) {
-    console.error('Erreur: ID de l\'événement manquant', event);
-    return;
-  }
-
-  try {
-    // Créer une copie de l'événement pour éviter les modifications directes
-    const updatedEvent = {
-      title: event.title,
-      content: event.content || '',
-      start: new Date(event.start),
-      end: new Date(event.end)
-    };
-
-    console.log('Updating event:', {
-      eventId,
-      updatedEvent,
-      originalEvent: event
-    });
-
-    // Mettre à jour l'événement sur le serveur
-    await api.put(`/events/${eventId}`, updatedEvent);
-    
-    // Rafraîchir les événements
-    await fetchEvents();
-  } catch (e) {
-    console.error('Erreur détaillée:', e);
-    alert("Erreur lors du déplacement de l'événement.");
-    // En cas d'erreur, rafraîchir pour rétablir l'état initial
-    await fetchEvents();
-  }
-}
-
 function cancelEdit() {
   editMode.value = false
   selectedEvent.value = null
@@ -283,5 +182,4 @@ onMounted(fetchEvents)
 </script>
 
 <style>
-
 </style>

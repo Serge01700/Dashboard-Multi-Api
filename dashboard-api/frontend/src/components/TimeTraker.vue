@@ -1,6 +1,6 @@
 <template>
   <div
-    class="time-tracker border rounded-3xl w-[360px]"
+    class="time-tracker border rounded-3xl w-[260px]"
     :class=" [
       isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 

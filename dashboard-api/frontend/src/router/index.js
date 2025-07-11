@@ -64,6 +64,11 @@ const routes = [
                 path: 'weather',
                 name: 'WeatherPage',
                 component : () => import('@/page/WeatherDashboard.vue')
+            },
+            {
+                path: 'music',
+                name: 'MusicPage',
+                component : () => import('@/page/MusicDashboard.vue')
             }
         ]
     }

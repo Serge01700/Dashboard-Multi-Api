@@ -107,4 +107,4 @@ export const finnhubService = {
             throw error;
         }
     }
-}; 
+}
