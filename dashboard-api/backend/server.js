@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import gmailRoutes from './routes/gmail.js';
+import eventRoutes from './routes/events.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ const startServer = async () => {
     // Routes
     app.use('/api/auth', authRoutes);
     app.use('/api/gmail', gmailRoutes);
+    app.use('/api/events', eventRoutes);
 
     // Route de test
     app.get('/api/health', (req, res) => {
