@@ -7,7 +7,7 @@ dotenv.config();
 
 const router = express.Router();
 
-// Stockage temporaire du token (à améliorer en prod)
+// Stockage temporaire du token 
 let oauthToken = null;
 
 // Vérifier le statut d'authentification

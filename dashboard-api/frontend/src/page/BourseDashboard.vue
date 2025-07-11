@@ -168,6 +168,12 @@
         </div>
       </div>
     </div>
+
+  
+    <div>
+      <FinnuhChart symbol="AAPL" :isDarkMode="isDarkMode" />
+   
+    </div>
   </div>
 </template>
 
@@ -184,6 +190,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import FinnuhChart from '@/components/FinnuhChart.vue';
 
 // Enregistrer les composants nécessaires de Chart.js
 Chart.register(
@@ -203,6 +210,9 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  components: {
+    FinnuhChart
   },
   setup() {
     const searchQuery = ref('');
@@ -241,7 +251,7 @@ export default {
         localStorage.setItem('watchlist', JSON.stringify(watchlist.value));
         
         // Charger les données historiques et créer le graphique
-        await createStockChart(newStock);
+        await createFinnuhChart(newStock);
       } catch (error) {
         console.error('Erreur lors de l\'ajout à la liste de suivi:', error);
       }
@@ -258,7 +268,7 @@ export default {
       localStorage.setItem('watchlist', JSON.stringify(watchlist.value));
     };
 
-    const createStockChart = async (stock) => {
+    const createFinnuhChart = async (stock) => {
       try {
         const to = new Date();
         const from = new Date();
@@ -322,7 +332,7 @@ export default {
         try {
           const quote = await finnhubService.getQuote(stock.symbol);
           stock.quote = quote;
-          await createStockChart(stock);
+          await createFinnuhChart(stock);
         } catch (error) {
           console.error(`Erreur de mise à jour pour ${stock.symbol}:`, error);
         }
@@ -371,7 +381,7 @@ export default {
         
         // Créer les graphiques pour chaque action
         for (const stock of watchlist.value) {
-          await createStockChart(stock);
+          await createFinnuhChart(stock);
         }
       }
 
@@ -408,4 +418,4 @@ canvas {
 }
 
 
-</style> 
+</style>
