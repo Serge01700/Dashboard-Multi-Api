@@ -1,7 +1,7 @@
 <template>
 
     <div 
-    class="relative z-20 w-full max-w-lg p-5 m-8 backdrop-blur-md transition-all duration-300 rounded-3xl border h-[250px] md:h-[210px]" 
+    class="relative z-20 w-full max-w-lg p-5 m-4 backdrop-blur-md transition-all duration-300 rounded-3xl border h-[250px] md:h-[210px]" 
     :class="[
       isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 

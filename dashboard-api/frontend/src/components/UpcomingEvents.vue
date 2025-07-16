@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full md:h-[200px] max-w-lg p-4 rounded-3xl border shadow-dark-shadow hover:shadow-dark-shadow-hover"
+  <div class="m-4 w-full md:h-[210px] max-w-lg p-4 rounded-3xl border shadow-dark-shadow hover:shadow-dark-shadow-hover"
        :class="[isDarkMode ? 'border-dark-border bg-dark-card text-dark-text-primary' : 'border-light-border bg-light-card text-light-text-primary']">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-thin">Next events</h2>
