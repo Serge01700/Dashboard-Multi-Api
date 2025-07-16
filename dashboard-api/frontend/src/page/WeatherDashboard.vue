@@ -17,6 +17,7 @@
               ? 'bg-dark-card border-dark-border text-dark-text-primary' 
               : 'bg-light border-light-border text-light-text-primary'
           ]"
+      
         />
         <!-- Suggestions list -->
         <div 
@@ -48,7 +49,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Current weather card -->
       <div 
-        class="relative p-6 rounded-3xl border transition-all duration-300"
+        class="relative p-6 rounded-3xl border transition-all duration-300 w-full min-h-[400px] flex flex-col"
         :class="[
           isDarkMode 
             ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -80,8 +81,8 @@
           </div>
 
           <!-- Weather details -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="weather-detail">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+            <div class="weather-detail w-full min-h-[120px]">
               <BulletPoint 
                 :class="[
                   'w-12 h-12 mb-2',
@@ -97,7 +98,7 @@
               </p>
             </div>
 
-            <div class="weather-detail">
+            <div class="weather-detail w-full min-h-[120px]">
               <BulletPoint 
                 :class="[
                   'w-12 h-12 mb-2',
@@ -113,7 +114,7 @@
               </p>
             </div>
 
-            <div class="weather-detail">
+            <div class="weather-detail w-full min-h-[120px]">
               <BulletPoint 
                 :class="[
                   'w-12 h-12 mb-2',
@@ -129,7 +130,7 @@
               </p>
             </div>
 
-            <div class="weather-detail">
+            <div class="weather-detail w-full min-h-[120px]">
               <BulletPoint 
                 :class="[
                   'w-12 h-12 mb-2',
