@@ -1,6 +1,6 @@
 <template>
   <div
-    class="time-tracker border rounded-3xl w-[260px]"
+    class="time-tracker hidden md:block  border rounded-3xl "
     :class=" [
       isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
@@ -120,7 +120,8 @@ body {
   
   border-radius: 28px;
   padding: 14px 14px;
-  width: 349px;
+  width: 289px;
+  margin-right: 40px;
   /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); */
   /* border: 1px solid #3a4551; */
 }
@@ -158,7 +159,7 @@ body {
 }
 
 .time-display {
-  font-size: 46px;
+  font-size: 36px;
   font-weight: 300;
   /* color: #ffffff; */
   font-variant-numeric: tabular-nums;

@@ -6,7 +6,7 @@
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <div v-for="track in tracks" :key="track.trackId"
-        class="rounded-xl border p-4 transition-all duration-300 hover:transform hover:scale-105"
+        class="rounded-xl border p-4 transition-all duration-300 cursor-pointer" 
         :class="[
           isDarkMode 
             ? 'bg-dark-card border-dark-border text-dark-text-primary' 
