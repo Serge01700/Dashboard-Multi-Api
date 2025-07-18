@@ -16,7 +16,7 @@
         <h3 class="text-2xl md:text-lg font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
           Recent Tasks
         </h3>
-        <router-link to="todo" class="text-sm font-medium transition-colors hover:text-blue-500">
+        <router-link to="todo" class="text-sm text-gray-500 font-medium transition-colors hover:text-blue-500">
           View All
         </router-link>
       </div>

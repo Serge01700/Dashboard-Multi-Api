@@ -2,7 +2,7 @@
   <div :class="['m-4 h-[250px] md:h-[210px] p-4 max-w-lg rounded-3xl border', isDarkMode 
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
         : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover']">
-    <h2 class="text-xl font-bold mb-4" :class="isDarkMode ? 'text-white' : 'text-gray-900'">Currency converter</h2>
+    <h2 class="text-xl mb-4" :class="isDarkMode ? 'text-white' : 'text-gray-900'">Currency converter</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
         <input
