@@ -171,7 +171,7 @@
 
   
     <div>
-      <FinnuhChart symbol="AAPL" :isDarkMode="isDarkMode" />
+      <!-- <FinnuhChart symbol="AAPL" :isDarkMode="isDarkMode" /> -->
    
     </div>
   </div>

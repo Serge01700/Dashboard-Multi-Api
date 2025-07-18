@@ -15,12 +15,14 @@
             <Sidebar class="items-center" :isDarkMode="isDarkMode" />
           </div>
           <!-- Barre verticale - cachée en mobile -->
-          <div class="absolute top-0 right-0 h-full w-[1px] bg-gray-700 hidden md:block"></div>
+          <div class="absolute top-0 right-0 h-full w-[1px] hidden md:block"
+               :class="isDarkMode ? 'bg-white opacity-30' : 'bg-gray-500'"></div>
         </div>
 
         <div class="flex-1 relative order-1 md:order-2 overflow-y-auto">
           <!-- Barre horizontale - cachée en mobile -->
-          <div class="absolute top-[70px] left-0 w-full h-[1px] bg-gray-700 hidden md:block"></div>
+          <div class="absolute top-[70px] left-0 w-full h-[1px] hidden md:block"
+               :class="isDarkMode ? 'bg-white opacity-30' : 'bg-gray-500'"></div>
           
         
               <div class="pt-[90px] px-6 pb-32 md:pb-0">
@@ -105,7 +107,7 @@ export default {
       this.time += 1;
       
       const x = 50 + Math.sin(this.time * this.waveSpeed) * this.waveAmplitude;
-      const y = 50 + Math.cos(this.time * this.waveSpeed * 1.2) * this.waveAmplitude;
+      const y = 50 + Math.cos(this.time * this.waveSpeed * 2.2) * this.waveAmplitude;
       
       if (this.$refs.ellipseBlur) {
         this.$refs.ellipseBlur.style.left = `${x}%`;

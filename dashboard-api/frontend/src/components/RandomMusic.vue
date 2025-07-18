@@ -5,8 +5,8 @@
         ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' 
         : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'
     ]">
-    <div class="flex justify-between items-center mb-4">
-      <p class="text-2xl md:text-lg font-light" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Discover the Music</p>
+    <div class="flex justify-between items-center">
+      <p class="text-2xl mb-5 md:text-lg font-light" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">Discover the Music</p>
       <button @click="loadRandomMusic" class="p-2 rounded-full hover:bg-opacity-20" :class="isDarkMode ? 'hover:bg-dark-border' : 'hover:bg-light-border'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
