@@ -52,7 +52,7 @@
           <Transition
             appear
             enter-active-class="transition duration-700 ease-out"
-            enter-from-class="opacity-0 translate-x-[-100px]"
+            enter-from-class="opacity-0 -translate-x-[-100px]"
             enter-to-class="opacity-100 translate-x-0"
             leave-active-class="transition duration-500 ease-in"
             leave-from-class="opacity-100"

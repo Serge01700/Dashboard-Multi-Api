@@ -13,30 +13,37 @@
 
       <!-- Email -->
       <div class="w-full text-black">
+        <label for="email" class="sr-only">Email</label>
         <input
+          id="email"
           type="email"
-          class="w-full p-2 rounded border"
+          class="w-full p-2 rounded border bg-gray-100 text-gray-800 placeholder-gray-400"
           v-model="email"
           required
           placeholder="Enter your email..."
           autocomplete="email"
+          name="email"
         />
       </div>
 
       <!-- Mot de passe -->
       <div class="w-full relative text-black">
+        <label for="password" class="sr-only">Password</label>
         <input
+          id="password"
           :type="showPassword ? 'text' : 'password'"
-          class="w-full p-2 rounded border"
+          class="w-full p-2 rounded border bg-gray-100 text-gray-800 placeholder-gray-400"
           v-model="password"
           required
           placeholder="Enter your password..."
           autocomplete="current-password"
+          name="password"
         />
         <button 
           type="button" 
           class="absolute right-2 top-2 text-gray-500"
           @click="showPassword = !showPassword"
+          :aria-label="showPassword ? 'Hide password' : 'Show password'"
         >
           👁️
         </button>

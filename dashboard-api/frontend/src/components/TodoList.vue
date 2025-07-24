@@ -12,7 +12,7 @@
       enter-active-class="transition duration-700 ease-out"
       enter-from-class="opacity-0 -translate-y-20"
       enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-500 ease-in"
+      leave-active-class="transition duration-300 ease-in"
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
@@ -212,7 +212,6 @@ onBeforeUnmount(() => {
   position: absolute;
 }
 
-/* Animation delay utilities */
 .delay-100 {
   transition-delay: 100ms;
 }

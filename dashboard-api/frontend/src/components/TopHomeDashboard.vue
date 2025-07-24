@@ -12,13 +12,13 @@
             >
                 <BulletPoint
                 :class="[
-                'w-[100px] h-[100px] ml-20',
+                 '  w-[90px] h-[90px] ml-20 md:ml-2',
                 isDarkMode ? 'bg-dark-card' : 'bg-dark',
                 'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
                 ]"
                 
             >
-                <span class="text-white text-4xl font-light">
+                <span class="text-white text-2xl font-light">
                         {{ dayNumber }}
                 </span>
         </BulletPoint>
