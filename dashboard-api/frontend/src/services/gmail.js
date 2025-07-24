@@ -59,7 +59,7 @@ export async function archiveMail(messageId) {
 // Supprimer un mail
 export async function deleteMail(messageId) {
   try {
-    const response = await apiClient.delete(`/gmail/delete/${messageId}`);
+    const response = await apiClient.delete(`/gmail/mails/${messageId}`);
     return response.data;
   } catch (error) {
     handleGmailError(error);
@@ -68,8 +68,16 @@ export async function deleteMail(messageId) {
 }
 
 // Obtenir l'URL d'une image pour l'affichage
-export function getImageUrl(messageId, attachmentId) {
-  return `${apiClient.defaults.baseURL}/gmail/image/${messageId}/${attachmentId}`;
+export async function getImageUrl(messageId, attachmentId) {
+  try {
+    const response = await apiClient.get(`/gmail/image/${messageId}/${attachmentId}`, {
+      responseType: 'blob'
+    });
+    return URL.createObjectURL(response.data);
+  } catch (error) {
+    handleGmailError(error);
+    throw error;
+  }
 }
 
 // Télécharger une pièce jointe
@@ -85,14 +93,11 @@ export async function downloadAttachment(messageId, attachmentId) {
   }
 }
 
+// Fonction utilitaire pour gérer les erreurs Gmail
 function handleGmailError(error) {
-  if (error.response?.status === 401) {
-    // Rediriger vers l'authentification Gmail si nécessaire
-    if (error.response.data?.authUrl) {
-      window.location.href = error.response.data.authUrl;
-    }
+  if (error.response?.status === 401 && error.response?.data?.authUrl) {
+    window.location.href = error.response.data.authUrl;
   }
-  console.error('Erreur Gmail:', error);
 }
 
 export const initiateGmailAuth = () => {
