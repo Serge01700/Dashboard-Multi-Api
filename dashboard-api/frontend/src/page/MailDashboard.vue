@@ -2,252 +2,311 @@
   <div class="mail-dashboard rounded-t-[15px] w-full h-full overflow-hidden"
     :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card', 'border-dark-border']">
     <!-- Message d'authentification -->
-    <div v-if="!isAuthenticated" class="flex flex-col items-center justify-center h-full">
-      <p class="text-xl mb-4" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-        Vous devez vous connecter à Gmail pour accéder à vos emails
-      </p>
-      <button @click="loginToGmail" 
-              class="px-4 py-2 rounded text-white"
-              :class="[isDarkMode ? 'bg-dark-accent' : 'bg-light-accent']">
-        Se connecter à Gmail
-      </button>
-    </div>
-
-    <!-- Interface des mails (visible uniquement si authentifié) -->
-    <div v-else>
-      <div class="flex justify-between items-center border-b-2" 
-           :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
-        <h1 class="p-3 text-2xl font-thin"
-          :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-          Emails
-        </h1>
-        <button @click="showNewMailModal = true"
-                class="mr-4 p-2 rounded-full hover:bg-opacity-80 transition-all"
-                :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
-          <span class="text-xl">+</span>
+    <Transition
+      appear
+      enter-active-class="transition duration-700 ease-out"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition duration-500 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="!isAuthenticated" class="flex flex-col items-center justify-center h-full">
+        <p class="text-xl mb-4" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+          Vous devez vous connecter à Gmail pour accéder à vos emails
+        </p>
+        <button @click="loginToGmail" 
+                class="px-4 py-2 rounded text-white"
+                :class="[isDarkMode ? 'bg-dark-accent' : 'bg-light-accent']">
+          Se connecter à Gmail
         </button>
       </div>
+    </Transition>
 
-      <main class="grid grid-cols-[39%_61%]">
-        <section class="p-2 left-mail border-r-2 border-dark-border"
-          :class="[isDarkMode ? '' : 'border-light-border']">
-          <ul class="flex flex-row gap-7 p-2 rounded-sm"
-            :class="[isDarkMode ? 'text-dark-text-primary bg-dark-card' : 'text-light-text-primary bg-light-card']">
-            <li 
-             :class="[activeTab === 'All Mail' ? 'bg-dark-accent' : '']"
-              @click="activeTab = 'All Mail'">All Mail</li>
-            <li 
-             :class="[activeTab === 'Unread' ? 'bg-dark-accent' : '']"
-              @click="activeTab = 'Unread'">Unread</li>
-            <li 
-              :class="[activeTab === 'Active' ? 'bg-dark-accent' : '']"
-              @click="activeTab = 'Active'">Archive</li>
-          </ul>
+    <!-- Interface des mails (visible uniquement si authentifié) -->
+    <Transition
+      appear
+      enter-active-class="transition duration-700 ease-out"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition duration-500 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="isAuthenticated">
+        <div class="flex justify-between items-center border-b-2" 
+             :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
+          <h1 class="p-3 text-2xl font-thin"
+            :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+            Emails
+          </h1>
+          <button @click="showNewMailModal = true"
+                  class="mr-4 p-2 rounded-full hover:bg-opacity-80 transition-all"
+                  :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
+            <span class="text-xl">+</span>
+          </button>
+        </div>
 
+        <main class="grid grid-cols-[39%_61%]">
           <!-- Liste des mails -->
-          <div class="mt-4 overflow-y-auto" style="height: calc(100vh - 180px);">
-            <div v-if="loading" class="p-4 text-center">
-              Chargement des mails...
-            </div>
-            <div v-else-if="error" class="p-4 text-red-500">
-              {{ error }}
-            </div>
-            <div v-else>
-              <ul v-if="mails.length > 0">
-                <li v-for="mail in mails" 
-                    :key="mail.id" 
-                    @click="selectMail(mail)"
-                    class="border-b p-2 cursor-pointer transition-all duration-200"
-                    :class="[
-                      selectedMail?.id === mail.id ? 'bg-dark-accent bg-opacity-20' : '',
-                      isDarkMode ? 'hover:bg-dark-accent hover:bg-opacity-10' : 'hover:bg-light-accent hover:bg-opacity-10'
-                    ]">
-                  <div class="font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-                    {{ mail.subject || '(Sans sujet)' }}
-                  </div>
-                  <div class="text-xs" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
-                    De : {{ mail.from }}
-                  </div>
-                  <div class="text-sm mt-1 line-clamp-1" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
-                    {{ mail.snippet }}
-                  </div>
-                </li>
+          <Transition
+            appear
+            enter-active-class="transition duration-700 ease-out"
+            enter-from-class="opacity-0 translate-x-[-100px]"
+            enter-to-class="opacity-100 translate-x-0"
+            leave-active-class="transition duration-500 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <section class="p-2 left-mail border-r-2 border-dark-border"
+              :class="[isDarkMode ? '' : 'border-light-border']">
+              <ul class="flex flex-row gap-7 p-2 rounded-sm"
+                :class="[isDarkMode ? 'text-dark-text-primary bg-dark-card' : 'text-light-text-primary bg-light-card']">
+                <li 
+                 :class="[activeTab === 'All Mail' ? 'bg-dark-accent' : '']"
+                  @click="activeTab = 'All Mail'">All Mail</li>
+                <li 
+                 :class="[activeTab === 'Unread' ? 'bg-dark-accent' : '']"
+                  @click="activeTab = 'Unread'">Unread</li>
+                <li 
+                  :class="[activeTab === 'Active' ? 'bg-dark-accent' : '']"
+                  @click="activeTab = 'Active'">Archive</li>
               </ul>
-              <div v-else class="p-4 text-center" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
-                Aucun mail à afficher
-              </div>
-            </div>
-          </div>
-        </section>
 
-        <!-- Vue détaillée du mail -->
-        <section class="right-mail p-4 overflow-y-auto" style="height: calc(100vh - 100px);">
-          <div v-if="selectedMail" class="h-full">
-            <div class="mb-6">
-              <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-                  {{ selectedMail.subject || '(Sans sujet)' }}
-                </h2>
-                <div class="flex gap-2">
-                  <button @click="archiveSelectedMail" 
-                          class="p-2 rounded hover:bg-opacity-80 transition-all"
-                          :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
-                    Archiver
-                  </button>
-                  <button @click="confirmDelete" 
-                          class="p-2 rounded bg-red-500 text-white hover:bg-opacity-80 transition-all">
-                    Supprimer
-                  </button>
+              <!-- Liste des mails -->
+              <div class="mt-4 overflow-y-auto" style="height: calc(100vh - 180px);">
+                <div v-if="loading" class="p-4 text-center">
+                  Chargement des mails...
                 </div>
-              </div>
-              <div class="flex flex-col gap-2 mb-6">
-                <div :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
-                  <span class="font-medium">De :</span> {{ selectedMail.from }}
+                <div v-else-if="error" class="p-4 text-red-500">
+                  {{ error }}
                 </div>
-              </div>
-              <div class="border-t pt-4 whitespace-pre-wrap" 
-                   :class="[
-                     isDarkMode ? 'text-dark-text-primary border-dark-border' : 'text-light-text-primary border-light-border'
-                   ]">
-                {{ selectedMail.snippet }}
-              </div>
-
-              <!-- Section des pièces jointes -->
-              <div v-if="selectedMail.payload?.parts" class="mt-6 border-t pt-4"
-                   :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
-                <h3 class="text-lg font-medium mb-3"
-                    :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-                  Pièces jointes
-                </h3>
-                <div class="grid grid-cols-2 gap-4">
-                  <div v-for="part in getAttachments(selectedMail.payload.parts)" 
-                       :key="part.body.attachmentId"
-                       class="border rounded p-3 flex items-center justify-between"
-                       :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
-                    <div class="flex items-center space-x-2">
-                      <!-- Aperçu pour les images -->
-                      <div v-if="isImage(part.mimeType)" class="w-12 h-12">
-                        <img :src="getImageUrl(selectedMail.id, part.body.attachmentId)" 
-                             :alt="part.filename"
-                             class="w-full h-full object-cover rounded">
+                <div v-else>
+                  <ul v-if="mails.length > 0">
+                    <li v-for="mail in mails" 
+                        :key="mail.id" 
+                        @click="selectMail(mail)"
+                        class="border-b p-2 cursor-pointer transition-all duration-200"
+                        :class="[
+                          selectedMail?.id === mail.id ? 'bg-dark-accent bg-opacity-20' : '',
+                          isDarkMode ? 'hover:bg-dark-accent hover:bg-opacity-10' : 'hover:bg-light-accent hover:bg-opacity-10'
+                        ]">
+                      <div class="font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                        {{ mail.subject || '(Sans sujet)' }}
                       </div>
-                      <!-- Icône pour les autres types de fichiers -->
-                      <div v-else class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded">
-                        <span class="text-2xl">📎</span>
+                      <div class="text-xs" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                        De : {{ mail.from }}
                       </div>
-                      <span class="text-sm truncate max-w-[150px]"
-                            :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-                        {{ part.filename }}
-                      </span>
-                    </div>
-                    <button @click="downloadFile(selectedMail.id, part.body.attachmentId, part.filename)"
-                            class="px-3 py-1 rounded text-sm"
-                            :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
-                      Télécharger
-                    </button>
+                      <div class="text-sm mt-1 line-clamp-1" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                        {{ mail.snippet }}
+                      </div>
+                    </li>
+                  </ul>
+                  <div v-else class="p-4 text-center" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                    Aucun mail à afficher
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div v-else class="h-full flex items-center justify-center">
-            <p class="text-center" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
-              Sélectionnez un mail pour voir son contenu
-            </p>
-          </div>
-        </section>
-      </main>
+            </section>
+          </Transition>
 
-      <!-- Modal Nouveau Mail -->
-      <div v-if="showNewMailModal" 
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-[600px] max-h-[80vh] overflow-y-auto"
-             :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card']">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-              Nouveau Message
-            </h3>
-            <button @click="showNewMailModal = false" class="text-gray-500 hover:text-gray-700">
-              ✕
-            </button>
-          </div>
-          
-          <form @submit.prevent="sendNewMail" class="space-y-4">
-            <div>
-              <input type="email" 
-                     v-model="newMail.to" 
-                     placeholder="À :"
-                     class="w-full p-2 rounded border"
-                     :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
-                     required>
-            </div>
-            
-            <div>
-              <input type="text" 
-                     v-model="newMail.subject" 
-                     placeholder="Objet :"
-                     class="w-full p-2 rounded border"
-                     :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
-                     required>
-            </div>
-            
-            <div>
-              <textarea v-model="newMail.content" 
-                        placeholder="Contenu du message..."
-                        rows="10"
-                        class="w-full p-2 rounded border"
-                        :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
-                        required></textarea>
-            </div>
-            
-            <div class="flex justify-end gap-2">
-              <button type="button" 
-                      @click="showNewMailModal = false"
-                      class="px-4 py-2 rounded border"
-                      :class="[isDarkMode ? 'border-dark-border text-dark-text-primary' : 'border-gray-300']">
-                Annuler
-              </button>
-              <button type="submit" 
-                      class="px-4 py-2 rounded text-white"
-                      :class="[isDarkMode ? 'bg-dark-accent' : 'bg-light-accent']"
-                      :disabled="sending">
-                {{ sending ? 'Envoi...' : 'Envoyer' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+          <!-- Vue détaillée du mail -->
+          <Transition
+            appear
+            enter-active-class="transition duration-700 ease-out"
+            enter-from-class="opacity-0 translate-x-[100px]"
+            enter-to-class="opacity-100 translate-x-0"
+            leave-active-class="transition duration-500 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <section class="right-mail p-4 overflow-y-auto" style="height: calc(100vh - 100px);">
+              <div v-if="selectedMail" class="h-full">
+                <div class="mb-6">
+                  <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                      {{ selectedMail.subject || '(Sans sujet)' }}
+                    </h2>
+                    <div class="flex gap-2">
+                      <button @click="archiveSelectedMail" 
+                              class="p-2 rounded hover:bg-opacity-80 transition-all"
+                              :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
+                        Archiver
+                      </button>
+                      <button @click="confirmDelete" 
+                              class="p-2 rounded bg-red-500 text-white hover:bg-opacity-80 transition-all">
+                        Supprimer
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-2 mb-6">
+                    <div :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                      <span class="font-medium">De :</span> {{ selectedMail.from }}
+                    </div>
+                  </div>
+                  <div class="border-t pt-4 whitespace-pre-wrap" 
+                       :class="[
+                         isDarkMode ? 'text-dark-text-primary border-dark-border' : 'text-light-text-primary border-light-border'
+                       ]">
+                    {{ selectedMail.snippet }}
+                  </div>
 
-      <!-- Modal Confirmation Suppression -->
-      <div v-if="showDeleteModal" 
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6"
-             :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card']">
-          <h3 class="text-xl font-bold mb-4" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-            Confirmer la suppression
-          </h3>
-          <p class="mb-6" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
-            Êtes-vous sûr de vouloir supprimer ce mail ?
-          </p>
-          <div class="flex justify-end gap-2">
-            <button @click="showDeleteModal = false"
-                    class="px-4 py-2 rounded border"
-                    :class="[isDarkMode ? 'border-dark-border text-dark-text-primary' : 'border-gray-300']">
-              Annuler
-            </button>
-            <button @click="deleteSelectedMail"
-                    class="px-4 py-2 rounded bg-red-500 text-white hover:bg-opacity-80">
-              Supprimer
-            </button>
+                  <!-- Section des pièces jointes -->
+                  <div v-if="selectedMail.payload?.parts" class="mt-6 border-t pt-4"
+                       :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
+                    <h3 class="text-lg font-medium mb-3"
+                        :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                      Pièces jointes
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                      <div v-for="part in getAttachments(selectedMail.payload.parts)" 
+                           :key="part.body.attachmentId"
+                           class="border rounded p-3 flex items-center justify-between"
+                           :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
+                        <div class="flex items-center space-x-2">
+                          <!-- Aperçu pour les images -->
+                          <div v-if="isImage(part.mimeType)" class="w-12 h-12">
+                            <img :src="getImageUrl(selectedMail.id, part.body.attachmentId)" 
+                                 :alt="part.filename"
+                                 class="w-full h-full object-cover rounded">
+                          </div>
+                          <!-- Icône pour les autres types de fichiers -->
+                          <div v-else class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded">
+                            <span class="text-2xl">📎</span>
+                          </div>
+                          <span class="text-sm truncate max-w-[150px]"
+                                :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                            {{ part.filename }}
+                          </span>
+                        </div>
+                        <button @click="downloadFile(selectedMail.id, part.body.attachmentId, part.filename)"
+                                class="px-3 py-1 rounded text-sm"
+                                :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
+                          Télécharger
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="h-full flex items-center justify-center">
+                <p class="text-center" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                  Sélectionnez un mail pour voir son contenu
+                </p>
+              </div>
+            </section>
+          </Transition>
+        </main>
+
+        <!-- Modal Nouveau Mail -->
+        <Transition
+          enter-active-class="transition duration-300 ease-out"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition duration-200 ease-in"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
+        >
+          <div v-if="showNewMailModal" 
+               class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-[600px] max-h-[80vh] overflow-y-auto"
+                 :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card']">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                  Nouveau Message
+                </h3>
+                <button @click="showNewMailModal = false" class="text-gray-500 hover:text-gray-700">
+                  ✕
+                </button>
+              </div>
+              
+              <form @submit.prevent="sendNewMail" class="space-y-4">
+                <div>
+                  <input type="email" 
+                         v-model="newMail.to" 
+                         placeholder="À :"
+                         class="w-full p-2 rounded border"
+                         :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
+                         required>
+                </div>
+                
+                <div>
+                  <input type="text" 
+                         v-model="newMail.subject" 
+                         placeholder="Objet :"
+                         class="w-full p-2 rounded border"
+                         :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
+                         required>
+                </div>
+                
+                <div>
+                  <textarea v-model="newMail.content" 
+                            placeholder="Contenu du message..."
+                            rows="10"
+                            class="w-full p-2 rounded border"
+                            :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
+                            required></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-2">
+                  <button type="button" 
+                          @click="showNewMailModal = false"
+                          class="px-4 py-2 rounded border"
+                          :class="[isDarkMode ? 'border-dark-border text-dark-text-primary' : 'border-gray-300']">
+                    Annuler
+                  </button>
+                  <button type="submit" 
+                          class="px-4 py-2 rounded text-white"
+                          :class="[isDarkMode ? 'bg-dark-accent' : 'bg-light-accent']"
+                          :disabled="sending">
+                    {{ sending ? 'Envoi...' : 'Envoyer' }}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
+        </Transition>
+
+        <!-- Modal Confirmation Suppression -->
+        <Transition
+          enter-active-class="transition duration-300 ease-out"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition duration-200 ease-in"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
+        >
+          <div v-if="showDeleteModal" 
+               class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6"
+                 :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card']">
+              <h3 class="text-xl font-bold mb-4" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                Confirmer la suppression
+              </h3>
+              <p class="mb-6" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                Êtes-vous sûr de vouloir supprimer ce mail ?
+              </p>
+              <div class="flex justify-end gap-2">
+                <button @click="showDeleteModal = false"
+                        class="px-4 py-2 rounded border"
+                        :class="[isDarkMode ? 'border-dark-border text-dark-text-primary' : 'border-gray-300']">
+                  Annuler
+                </button>
+                <button @click="deleteSelectedMail"
+                        class="px-4 py-2 rounded bg-red-500 text-white hover:bg-opacity-80">
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, Transition } from 'vue';
 import { 
   fetchAllMails, 
   fetchUnreadMails, 
@@ -481,5 +540,42 @@ ul > li {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+/* Animation delay utilities */
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+/* Transition pour les éléments de la liste */
+.mail-item-enter-active,
+.mail-item-leave-active {
+  transition: all 0.3s ease;
+}
+
+.mail-item-enter-from,
+.mail-item-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* Transition pour les modals */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 </style>

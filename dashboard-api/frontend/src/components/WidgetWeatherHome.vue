@@ -27,7 +27,7 @@
                 isDarkMode ? 'bg-dark-card' : 'bg-dark',
                 'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
               ]"
-              :image="'/src/assets/img/icons8-wind-50.png'" 
+              :image="getImageUrl('icons8-wind-50.png')"
               size="20px"
             />
             <div class="flex-column mt-1 ml-1">
@@ -44,7 +44,7 @@
                 isDarkMode ? 'bg-dark-card' : 'bg-dark',
                 'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
               ]"
-              :image="'/src/assets/img/icons8-humidity-64.png'" 
+              :image="getImageUrl('icons8-humidity-64.png')"
               size="20px"
             />
             <div class="flex-column mt-1 ml-1">
@@ -61,7 +61,7 @@
                 isDarkMode ? 'bg-dark-card' : 'bg-dark',
                 'border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover'
               ]"
-              :image="'/src/assets/img/icons8-umbrella-50.png'" 
+              :image="getImageUrl('icons8-umbrella-50.png')"
               size="20px"
             />
             <div class="flex-column mt-1 ml-1">
@@ -85,7 +85,11 @@ const props = defineProps({
     type: Boolean,
     required: true
   }
-})
+});
+
+const getImageUrl = (name) => {
+  return new URL(`../assets/img/${name}`, import.meta.url).href;
+}
 
 // États réactifs
 const temperature = ref(null)
@@ -121,5 +125,4 @@ const month = computed(() => new Date().toLocaleDateString('en-EN', { month: 'lo
 </script>
 
 <style>
-
 </style>

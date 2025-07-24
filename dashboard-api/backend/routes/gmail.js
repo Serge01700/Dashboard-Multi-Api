@@ -32,7 +32,8 @@ router.get('/auth', (req, res) => {
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
-    prompt: 'consent'
+    prompt: 'consent',
+    redirect_uri: process.env.GMAIL_REDIRECT_URI
   });
   res.redirect(authUrl);
 });
@@ -47,7 +48,8 @@ router.get('/callback', async (req, res) => {
     // Stocker le token
     oauthToken = tokens;
     
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard/mail`);
+    // Rediriger vers le frontend après l'authentification réussie
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard/mail`);
   } catch (error) {
     console.error('Erreur lors de l\'échange du code:', error);
     res.status(500).json({ error: 'Erreur lors de l\'authentification' });

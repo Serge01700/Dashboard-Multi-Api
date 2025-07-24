@@ -20,7 +20,7 @@
 
     <!-- Zone de contenu principal -->
     <main class="flex-1">
-      <div class="px-6">
+      <div class="px-4">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-6 h-full w-full">
         <draggable v-model="widgets" item-key="id" class="contents">
           <template #item="{ element, index }">
