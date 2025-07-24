@@ -143,47 +143,58 @@
                     <div :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
                       <span class="font-medium">De :</span> {{ selectedMail.from }}
                     </div>
+                    <div :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+                      <span class="font-medium">Date :</span> {{ formatDate(selectedMail.date) }}
+                    </div>
                   </div>
-                  <div class="border-t pt-4 whitespace-pre-wrap" 
+                  <div class="border-t pt-4" 
                        :class="[
                          isDarkMode ? 'text-dark-text-primary border-dark-border' : 'text-light-text-primary border-light-border'
                        ]">
-                    {{ selectedMail.snippet }}
+                    <!-- Affichage du contenu du mail -->
+                    <div v-if="selectedMail.content" 
+                         class="mail-content prose max-w-none"
+                         :class="[isDarkMode ? 'prose-invert' : '']"
+                         v-html="sanitizeHtml(selectedMail.content)">
+                    </div>
+                    <!-- Fallback sur le snippet si pas de contenu -->
+                    <div v-else class="whitespace-pre-wrap">
+                      {{ selectedMail.snippet }}
+                    </div>
                   </div>
-
-                  <!-- Section des pièces jointes -->
-                  <div v-if="selectedMail.payload?.parts" class="mt-6 border-t pt-4"
-                       :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
-                    <h3 class="text-lg font-medium mb-3"
-                        :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                  
+                  <!-- Affichage des pièces jointes -->
+                  <div v-if="selectedMail.attachments && selectedMail.attachments.length > 0" class="mt-4 border-t pt-4">
+                    <h3 class="text-lg font-medium mb-2" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
                       Pièces jointes
                     </h3>
-                    <div class="grid grid-cols-2 gap-4">
-                      <div v-for="part in getAttachments(selectedMail.payload.parts)" 
-                           :key="part.body.attachmentId"
-                           class="border rounded p-3 flex items-center justify-between"
+                    <div class="flex flex-wrap gap-4">
+                      <div v-for="attachment in selectedMail.attachments" 
+                           :key="attachment.attachmentId" 
+                           class="flex items-center gap-2 p-2 border rounded"
                            :class="[isDarkMode ? 'border-dark-border' : 'border-light-border']">
-                        <div class="flex items-center space-x-2">
-                          <!-- Aperçu pour les images -->
-                          <div v-if="isImage(part.mimeType)" class="w-12 h-12">
-                            <img :src="getImageUrl(selectedMail.id, part.body.attachmentId)" 
-                                 :alt="part.filename"
-                                 class="w-full h-full object-cover rounded">
-                          </div>
-                          <!-- Icône pour les autres types de fichiers -->
-                          <div v-else class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded">
-                            <span class="text-2xl">📎</span>
-                          </div>
-                          <span class="text-sm truncate max-w-[150px]"
-                                :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
-                            {{ part.filename }}
-                          </span>
+                        <!-- Aperçu pour les images -->
+                        <img v-if="isImage(attachment.mimeType)"
+                             :src="getAttachmentImageUrl(selectedMail.id, attachment.attachmentId)"
+                             class="w-10 h-10 object-cover rounded"
+                             :alt="attachment.filename">
+                        
+                        <!-- Icône pour les autres types de fichiers -->
+                        <div v-else class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
                         </div>
-                        <button @click="downloadFile(selectedMail.id, part.body.attachmentId, part.filename)"
-                                class="px-3 py-1 rounded text-sm"
-                                :class="[isDarkMode ? 'bg-dark-accent text-white' : 'bg-light-accent text-white']">
-                          Télécharger
-                        </button>
+                        
+                        <div class="flex flex-col">
+                          <span class="text-sm" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+                            {{ attachment.filename }}
+                          </span>
+                          <button @click="downloadAttachment(selectedMail.id, attachment.attachmentId, attachment.filename)"
+                                  class="text-xs text-blue-500 hover:text-blue-600">
+                            Télécharger
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -320,6 +331,7 @@ import {
   fetchEmails
 } from '@/services/gmail.js';
 import apiClient from '@/services/axios-config.js';
+import DOMPurify from 'dompurify';
 
 const props = defineProps({
     isDarkMode : {
@@ -345,6 +357,39 @@ const newMail = ref({
 });
 
 const emails = ref([]);
+
+// Ajouter la fonction sanitizeHtml dans la section setup
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('fr-FR', {
+    dateStyle: 'full',
+    timeStyle: 'short'
+  }).format(date);
+}
+
+function sanitizeHtml(html) {
+  if (!html) return '';
+  // Remplacer les URLs relatives des images par des URLs absolues
+  const baseUrl = apiClient.defaults.baseURL;
+  html = html.replace(/src="\/gmail\/image\//g, `src="${baseUrl}/gmail/image/`);
+  
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      'p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 
+      'blockquote', 'img', 'div', 'span', 'h1', 'h2', 'h3', 
+      'h4', 'h5', 'h6', 'table', 'tr', 'td', 'th', 'thead', 
+      'tbody', 'pre', 'code'
+    ],
+    ALLOWED_ATTR: [
+      'href', 'target', 'src', 'alt', 'class', 'style',
+      'border', 'cellpadding', 'cellspacing'
+    ],
+    ALLOW_DATA_ATTR: false,
+    ADD_TAGS: ['iframe'],
+    ADD_ATTR: ['frameborder', 'allowfullscreen']
+  });
+}
 
 // Vérifier l'état de l'authentification
 async function checkAuthStatus() {
@@ -577,5 +622,82 @@ ul > li {
 .modal-leave-to {
   opacity: 0;
   transform: scale(0.95);
+}
+
+.mail-content {
+  max-width: 100%;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+.mail-content :deep(img) {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+.mail-content :deep(blockquote) {
+  margin: 1em 0;
+  padding-left: 1em;
+  border-left: 3px solid #e5e7eb;
+  color: #666;
+}
+
+.mail-content :deep(pre), .mail-content :deep(code) {
+  background-color: #f3f4f6;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.mail-content :deep(table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.mail-content :deep(th), .mail-content :deep(td) {
+  border: 1px solid #e5e7eb;
+  padding: 0.5em;
+}
+
+.mail-content :deep(a) {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.mail-content :deep(ul), .mail-content :deep(ol) {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.mail-content :deep(ul) {
+  list-style-type: disc;
+}
+
+.mail-content :deep(ol) {
+  list-style-type: decimal;
+}
+
+/* Style pour le mode sombre */
+:deep(.dark) .mail-content pre,
+:deep(.dark) .mail-content code {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+:deep(.dark) .mail-content blockquote {
+  border-left-color: #4b5563;
+  color: #9ca3af;
+}
+
+:deep(.dark) .mail-content th,
+:deep(.dark) .mail-content td {
+  border-color: #4b5563;
+}
+
+:deep(.dark) .mail-content a {
+  color: #60a5fa;
 }
 </style>

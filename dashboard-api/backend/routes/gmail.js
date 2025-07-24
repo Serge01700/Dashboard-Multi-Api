@@ -94,12 +94,146 @@ router.get('/mails', ensureAuthenticated, async (req, res) => {
     
     // Récupérer les détails de chaque mail
     const mails = await Promise.all(messages.map(async (msg) => {
-      const mail = await gmail.users.messages.get({ userId: 'me', id: msg.id });
-      const headers = mail.data.payload.headers;
-      const subject = headers.find(h => h.name === 'Subject')?.value || '';
-      const from = headers.find(h => h.name === 'From')?.value || '';
-      const snippet = mail.data.snippet;
-      return { id: msg.id, subject, from, snippet };
+      try {
+        const mail = await gmail.users.messages.get({ 
+          userId: 'me', 
+          id: msg.id,
+          format: 'raw' // Utiliser le format raw pour obtenir le message complet
+        });
+
+        // Décoder le message raw
+        const rawContent = Buffer.from(mail.data.raw, 'base64').toString('utf8');
+        
+        // Parser les en-têtes
+        const headers = {};
+        const headerMatch = rawContent.match(/^(.*?)\r?\n\r?\n/s);
+        if (headerMatch) {
+          const headerLines = headerMatch[1].split(/\r?\n/);
+          let currentHeader = '';
+          headerLines.forEach(line => {
+            if (line.match(/^\s/)) {
+              // Continuation de l'en-tête précédent
+              headers[currentHeader] += ' ' + line.trim();
+            } else {
+              const match = line.match(/^(.*?):\s*(.*)/);
+              if (match) {
+                currentHeader = match[1].toLowerCase();
+                headers[currentHeader] = match[2];
+              }
+            }
+          });
+        }
+
+        // Extraire le contenu
+        let content = '';
+        const boundary = headers['content-type']?.match(/boundary="?([^";\s]*)"?/)?.[1];
+        
+        if (boundary) {
+          const parts = rawContent.split('--' + boundary);
+          parts.forEach(part => {
+            if (part.includes('text/html')) {
+              const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
+              if (match) {
+                content = match[1].trim();
+                // Décoder le contenu s'il est encodé en base64
+                if (part.toLowerCase().includes('content-transfer-encoding: base64')) {
+                  content = Buffer.from(content.replace(/\s/g, ''), 'base64').toString('utf8');
+                }
+              }
+            } else if (!content && part.includes('text/plain')) {
+              const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
+              if (match) {
+                content = match[1].trim();
+                // Décoder le contenu s'il est encodé en base64
+                if (part.toLowerCase().includes('content-transfer-encoding: base64')) {
+                  content = Buffer.from(content.replace(/\s/g, ''), 'base64').toString('utf8');
+                }
+                // Convertir le texte brut en HTML basique
+                content = content.replace(/\n/g, '<br>');
+              }
+            }
+          });
+        } else {
+          // Si pas de boundary, essayer de trouver le contenu après les en-têtes
+          const match = rawContent.match(/\r?\n\r?\n([\s\S]*?)$/);
+          if (match) {
+            content = match[1].trim();
+            // Vérifier si le contenu est encodé en base64
+            if (headers['content-transfer-encoding']?.toLowerCase() === 'base64') {
+              content = Buffer.from(content.replace(/\s/g, ''), 'base64').toString('utf8');
+            }
+          }
+        }
+
+        // Nettoyer le contenu HTML
+        content = content
+          .replace(/&quot;/g, '"')
+          .replace(/&apos;/g, "'")
+          .replace(/&amp;/g, '&')
+          .replace(/&#39;/g, "'")
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .trim();
+
+        // Extraire les pièces jointes
+        const attachments = [];
+        if (boundary) {
+          const parts = rawContent.split('--' + boundary);
+          parts.forEach(part => {
+            const contentType = part.match(/Content-Type:\s*([^;\r\n]+)/i)?.[1];
+            const contentDisposition = part.match(/Content-Disposition:([^\r\n]+)/i)?.[1];
+            const filename = contentDisposition?.match(/filename="?([^";\r\n]*)"?/)?.[1];
+            const contentId = part.match(/Content-ID:\s*<([^>]+)>/i)?.[1];
+
+            if (filename || (contentType && !contentType.startsWith('text/'))) {
+              const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
+              if (match) {
+                const attachmentData = match[1].trim();
+                attachments.push({
+                  filename: filename || 'attachment',
+                  mimeType: contentType || 'application/octet-stream',
+                  content: attachmentData,
+                  contentId: contentId,
+                  isInline: contentDisposition?.includes('inline')
+                });
+              }
+            }
+          });
+        }
+
+        // Remplacer les références CID par des URLs pour les images intégrées
+        attachments.forEach(attachment => {
+          if (attachment.contentId && attachment.isInline) {
+            const imageUrl = `/gmail/image/${msg.id}/${attachment.contentId}`;
+            content = content.replace(
+              new RegExp(`cid:${attachment.contentId}`, 'gi'),
+              imageUrl
+            );
+          }
+        });
+
+        return {
+          id: msg.id,
+          subject: headers['subject'] || '',
+          from: headers['from'] || '',
+          date: headers['date'] || '',
+          content: content || mail.data.snippet,
+          snippet: mail.data.snippet,
+          attachments
+        };
+
+      } catch (error) {
+        console.error(`Erreur lors de la récupération du mail ${msg.id}:`, error);
+        return {
+          id: msg.id,
+          subject: 'Erreur de chargement',
+          from: '',
+          date: '',
+          content: 'Impossible de charger le contenu du mail.',
+          snippet: '',
+          attachments: []
+        };
+      }
     }));
     
     console.log(`Détails récupérés pour ${mails.length} messages`);
@@ -233,29 +367,50 @@ router.get('/attachment/:messageId/:attachmentId', async (req, res) => {
 });
 
 // Route pour afficher une image en ligne
-router.get('/image/:messageId/:attachmentId', async (req, res) => {
+router.get('/image/:messageId/:contentId', async (req, res) => {
   try {
     const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-    const { messageId, attachmentId } = req.params;
+    const { messageId, contentId } = req.params;
 
-    const attachment = await gmail.users.messages.attachments.get({
-      userId: 'me',
-      messageId: messageId,
-      id: attachmentId
-    });
-
-    const buffer = Buffer.from(attachment.data.data, 'base64');
-    
-    // Récupérer le type MIME de l'image
+    // Récupérer le message complet
     const message = await gmail.users.messages.get({
       userId: 'me',
-      id: messageId
+      id: messageId,
+      format: 'raw'
     });
 
-    const attachmentPart = message.data.payload.parts.find(part => part.body.attachmentId === attachmentId);
+    // Décoder le message
+    const rawContent = Buffer.from(message.data.raw, 'base64').toString('utf8');
     
-    res.setHeader('Content-Type', attachmentPart.mimeType);
-    res.send(buffer);
+    // Trouver le boundary
+    const boundary = rawContent.match(/boundary="?([^";\s]*)"?/)?.[1];
+    
+    if (boundary) {
+      const parts = rawContent.split('--' + boundary);
+      for (const part of parts) {
+        const partContentId = part.match(/Content-ID:\s*<([^>]+)>/i)?.[1];
+        
+        if (partContentId === contentId) {
+          const contentType = part.match(/Content-Type:\s*([^;\r\n]+)/i)?.[1];
+          const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
+          
+          if (match) {
+            let imageData = match[1].trim();
+            
+            // Vérifier si l'image est encodée en base64
+            if (part.toLowerCase().includes('content-transfer-encoding: base64')) {
+              imageData = Buffer.from(imageData.replace(/\s/g, ''), 'base64');
+            }
+            
+            res.setHeader('Content-Type', contentType);
+            res.send(imageData);
+            return;
+          }
+        }
+      }
+    }
+    
+    throw new Error('Image non trouvée');
   } catch (error) {
     console.error('Erreur lors de l\'affichage de l\'image:', error);
     res.status(500).json({ error: 'Erreur lors de l\'affichage de l\'image' });
