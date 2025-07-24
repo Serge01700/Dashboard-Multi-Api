@@ -7,37 +7,53 @@
         : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'
     ]"
   >
-    <div class="mb-6">
-      <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
-        {{ currentDate }}
-      </p>
-      <h2 class="text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
-        Mes Tâches
-      </h2>
-      
-      <div class="flex gap-2 mt-5">
-        <input 
-          v-model="newTask" 
-          type="text" 
-          placeholder="Ajouter une nouvelle tâche" 
-          class="flex-1 p-2 rounded-lg focus:outline-none border transition-all duration-300"
-          :class="isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-light border-light-border text-light-text-primary'"
-          @keyup.enter="addTask"
-        />
-        <button 
-          @click="addTask" 
-          class="px-4 py-2 rounded-lg transition-all duration-300"
-          :class="isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary shadow-dark-shadow hover:shadow-dark-shadow-hover' : 'bg-light border-light-border text-light-text-primary shadow-light-shadow hover:shadow-light-shadow-hover'"
-        >
-          Ajouter
-        </button>
+    <Transition
+      appear
+      enter-active-class="transition duration-700 ease-out"
+      enter-from-class="opacity-0 -translate-y-20"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-500 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div class="mb-6">
+        <p class="date ml-1 mb-1" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
+          {{ currentDate }}
+        </p>
+        <h2 class="text-2xl font-light ml-1" :class="isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary'">
+          Mes Tâches
+        </h2>
+        
+        <div class="flex gap-2 mt-5">
+          <input 
+            v-model="newTask" 
+            type="text" 
+            placeholder="Ajouter une nouvelle tâche" 
+            class="flex-1 p-2 rounded-lg focus:outline-none border transition-all duration-300"
+            :class="isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-light border-light-border text-light-text-primary'"
+            @keyup.enter="addTask"
+          />
+          <button 
+            @click="addTask" 
+            class="px-4 py-2 rounded-lg transition-all duration-300"
+            :class="isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary shadow-dark-shadow hover:shadow-dark-shadow-hover' : 'bg-light border-light-border text-light-text-primary shadow-light-shadow hover:shadow-light-shadow-hover'"
+          >
+            Ajouter
+          </button>
+        </div>
       </div>
-    </div>
+    </Transition>
 
-    <div class="space-y-3">
-      <div v-for="(task, index) in tasks" :key="index" 
+    <TransitionGroup
+      name="list"
+      tag="div"
+      class="space-y-3"
+    >
+      <div v-for="(task, index) in tasks" :key="task.id || index" 
            class="flex items-center justify-between p-3 rounded-lg transition-all duration-300"
-           :class="isDarkMode ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'">
+           :class="isDarkMode ? 'bg-dark-card border-dark-border shadow-dark-shadow hover:shadow-dark-shadow-hover' : 'bg-light border-light-border shadow-light-shadow hover:shadow-light-shadow-hover'"
+           :style="{ '--delay': `${index * 100}ms` }"
+      >
         <div class="flex items-center gap-3">
           <input 
             type="checkbox" 
@@ -68,79 +84,81 @@
       </div>
       
       <div v-if="tasks.length === 0" 
+           key="empty"
            class="text-center py-3"
            :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">
         Aucune tâche pour le moment
       </div>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'TodoList',
-  props: {
-    isDarkMode: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data() {
-    return {
-      newTask: '',
-      tasks: []
-    }
-  },
-  computed: {
-    currentDate() {
-      return new Date().toLocaleDateString('fr-FR', {
-        month: 'long',
-        day: 'numeric',
-        weekday: 'short'
-      });
-    }
-  },
-  methods: {
-    addTask() {
-      if (this.newTask.trim()) {
-        this.tasks.unshift({
-          text: this.newTask,
-          completed: false,
-          date: new Date()
-        });
-        this.newTask = '';
-        this.saveTasks();
-      }
-    },
-    deleteTask(index) {
-      this.tasks.splice(index, 1);
-      this.saveTasks();
-    },
-    formatDate(date) {
-      return new Date(date).toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'short'
-      });
-    },
-    saveTasks() {
-      localStorage.setItem('tasks', JSON.stringify(this.tasks));
-      window.dispatchEvent(new Event('storage'));
-    },
-    loadTasks() {
-      const savedTasks = localStorage.getItem('tasks');
-      if (savedTasks) {
-        this.tasks = JSON.parse(savedTasks);
-      }
-    }
-  },
-  mounted() {
-    this.loadTasks();
-    window.addEventListener('storage', this.loadTasks);
-  },
-  beforeUnmount() {
-    window.removeEventListener('storage', this.loadTasks);
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+
+const props = defineProps({
+  isDarkMode: {
+    type: Boolean,
+    required: true
+  }
+})
+
+const newTask = ref('')
+const tasks = ref([])
+
+const currentDate = computed(() => {
+  return new Date().toLocaleDateString('fr-FR', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short'
+  })
+})
+
+function addTask() {
+  if (newTask.value.trim()) {
+    tasks.value.unshift({
+      id: Date.now(),
+      text: newTask.value,
+      completed: false,
+      date: new Date()
+    })
+    newTask.value = ''
+    saveTasks()
   }
 }
+
+function deleteTask(index) {
+  tasks.value.splice(index, 1)
+  saveTasks()
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short'
+  })
+}
+
+function saveTasks() {
+  localStorage.setItem('tasks', JSON.stringify(tasks.value))
+  window.dispatchEvent(new Event('storage'))
+}
+
+function loadTasks() {
+  const savedTasks = localStorage.getItem('tasks')
+  if (savedTasks) {
+    tasks.value = JSON.parse(savedTasks)
+  }
+}
+
+onMounted(() => {
+  loadTasks()
+  window.addEventListener('storage', loadTasks)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', loadTasks)
+})
 </script>
 
 <style scoped>
@@ -170,5 +188,40 @@ export default {
   background-color: rgba(255, 255, 255, 0.7);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Transitions pour la liste */
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* Pour assurer que les éléments qui bougent le font de manière fluide */
+.list-leave-active {
+  position: absolute;
+}
+
+/* Animation delay utilities */
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
 }
 </style> 

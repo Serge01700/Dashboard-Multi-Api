@@ -25,7 +25,7 @@
                :class="isDarkMode ? 'bg-white opacity-30' : 'bg-gray-500'"></div>
           
         
-              <div class="pt-[90px] px-6 pb-32 md:pb-0">
+              <div class="pt-[90px] px-3 pb-3 md:pb-0">
                 <RouterView :isDarkMode="isDarkMode" />
               </div>
             </div>

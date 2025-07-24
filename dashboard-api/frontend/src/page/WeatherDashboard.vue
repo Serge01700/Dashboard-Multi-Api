@@ -89,7 +89,7 @@
                   isDarkMode ? 'bg-dark-card' : 'bg-dark',
                   'border-dark-border shadow-dark-shadow'
                 ]"
-                :image="'/src/assets/img/icons8-wind-50.png'" 
+                :image="getImageUrl('icons8-wind-50.png')" 
                 size="24px"
               />
               <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">Wind</p>
@@ -105,7 +105,7 @@
                   isDarkMode ? 'bg-dark-card' : 'bg-dark',
                   'border-dark-border shadow-dark-shadow'
                 ]"
-                :image="'/src/assets/img/icons8-humidity-64.png'" 
+                :image="getImageUrl('icons8-humidity-64.png')" 
                 size="24px"
               />
               <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">Humidity</p>
@@ -121,7 +121,7 @@
                   isDarkMode ? 'bg-dark-card' : 'bg-dark',
                   'border-dark-border shadow-dark-shadow'
                 ]"
-                :image="'/src/assets/img/icons8-umbrella-50.png'" 
+                :image="getImageUrl('icons8-umbrella-50.png')" 
                 size="24px"
               />
               <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">Precipitation</p>
@@ -137,7 +137,7 @@
                   isDarkMode ? 'bg-dark-card' : 'bg-dark',
                   'border-dark-border shadow-dark-shadow'
                 ]"
-                :image="'/src/assets/img/icons8-météo-pomme-50.png'" 
+                :image="getImageUrl('icons8-météo-pomme-50.png')" 
                 size="24px"
               />
               <p class="text-sm" :class="isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary'">Feels like</p>
@@ -240,6 +240,10 @@ const props = defineProps({
     required: true
   }
 })
+
+const getImageUrl = (name) => {
+  return new URL(`../assets/img/${name}`, import.meta.url).href;
+}
 
 const currentWeather = ref(null)
 const hourlyForecast = ref([])
