@@ -2,6 +2,7 @@ import express from 'express';
 import { google } from 'googleapis';
 import { oauth2Client, SCOPES } from '../config/oauth2Client.js';
 import dotenv from 'dotenv';
+import currentConfig from '../config/environment.js';
 
 dotenv.config();
 
@@ -48,8 +49,9 @@ router.get('/callback', async (req, res) => {
     // Stocker le token
     oauthToken = tokens;
     
+    
     // Rediriger vers le frontend après l'authentification réussie
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard/mail`);
+    res.redirect(`${currentConfig.frontendUrl}/dashboard/mail`);
   } catch (error) {
     console.error('Erreur lors de l\'échange du code:', error);
     res.status(500).json({ error: 'Erreur lors de l\'authentification' });

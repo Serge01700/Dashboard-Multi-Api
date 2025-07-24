@@ -1,12 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import './config/env.js';  
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import gmailRoutes from './routes/gmail.js';
 import eventRoutes from './routes/events.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

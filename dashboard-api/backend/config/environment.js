@@ -1,4 +1,7 @@
+// Détection explicite de l'environnement de production
 const isDevelopment = process.env.NODE_ENV !== 'production';
+console.log('Current NODE_ENV:', process.env.NODE_ENV);
+console.log('isDevelopment:', isDevelopment);
 
 const config = {
   development: {
@@ -14,5 +17,7 @@ const config = {
 };
 
 const currentConfig = isDevelopment ? config.development : config.production;
+console.log('Using configuration:', isDevelopment ? 'development' : 'production');
+console.log('Frontend URL:', currentConfig.frontendUrl);
 
 export default currentConfig; 

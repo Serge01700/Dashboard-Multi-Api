@@ -26,7 +26,6 @@ services:
       - ./backend/.env
     environment:
       - NODE_ENV=production
-      - FRONTEND_URL=http://localhost:8080
     depends_on:
       mongodb:
         condition: service_healthy
@@ -57,4 +56,4 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge
+    driver: bridge 

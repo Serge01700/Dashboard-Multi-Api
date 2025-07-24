@@ -123,7 +123,7 @@ const handleRegister = async () => {
     })
 
     if (result.success) {
-      router.push('/dashboard')
+      router.push('/dashboard/home')
     } else {
       errorMessage.value = result.message
     }
