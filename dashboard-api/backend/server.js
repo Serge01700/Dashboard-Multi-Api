@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import './config/env.js';  
+import 'dotenv/config';
+import './config/environment.js' 
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import gmailRoutes from './routes/gmail.js';
