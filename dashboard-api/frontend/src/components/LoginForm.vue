@@ -69,6 +69,11 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
+// FALSE = Sécu désactiver
+
+
+const ENABLE_LOGIN_SECURITY = true;
+
 export default {
   setup() {
     const email = ref('');
@@ -104,19 +109,22 @@ export default {
         }
 
         // Vérification des tentatives de connexion échouées
-        const loginAttempts = parseInt(sessionStorage.getItem('loginAttempts') || '0');
-        if (loginAttempts >= 5) {
-          const lastAttempt = parseInt(sessionStorage.getItem('lastLoginAttempt') || '0');
-          const currentTime = Date.now();
-          
-          // Attente de 15 minutes (900000 ms) après 5 tentatives échouées
-          if (currentTime - lastAttempt < 900000) {
-            errorMessage.value = 'Trop de tentatives. Veuillez réessayer plus tard.';
-            isLoading.value = false;
-            return;
-          } else {
-            // Réinitialiser les tentatives après le délai d'attente
-            sessionStorage.setItem('loginAttempts', '0');
+        if (ENABLE_LOGIN_SECURITY) {
+          const loginAttempts = parseInt(sessionStorage.getItem('loginAttempts') || '0');
+          if (loginAttempts >= 5) {
+            const lastAttempt = parseInt(sessionStorage.getItem('lastLoginAttempt') || '0');
+            const currentTime = Date.now();
+            
+            // Attente de 15 minutes (900000 ms) après 5 tentatives échouées
+            if (currentTime - lastAttempt < 900000) {
+              const remainingTime = Math.ceil((900000 - (currentTime - lastAttempt)) / 60000);
+              errorMessage.value = `Trop de tentatives. Veuillez réessayer dans ${remainingTime} minutes.`;
+              isLoading.value = false;
+              return;
+            } else {
+              // Réinitialiser les tentatives après le délai d'attente
+              sessionStorage.setItem('loginAttempts', '0');
+            }
           }
         }
 
@@ -143,9 +151,12 @@ export default {
          
           router.push(result.redirectTo || '/dashboard/home');
         } else {
-          // En cas d'échec, augmenter le compteur de tentatives
-          sessionStorage.setItem('loginAttempts', (loginAttempts + 1).toString());
-          sessionStorage.setItem('lastLoginAttempt', Date.now().toString());
+          // En cas d'échec, augmenter le compteur de tentatives si la sécurité est activée
+          if (ENABLE_LOGIN_SECURITY) {
+            const attempts = parseInt(sessionStorage.getItem('loginAttempts') || '0');
+            sessionStorage.setItem('loginAttempts', (attempts + 1).toString());
+            sessionStorage.setItem('lastLoginAttempt', Date.now().toString());
+          }
           errorMessage.value = result.message || 'Échec de la connexion';
         }
       } catch (error) {
