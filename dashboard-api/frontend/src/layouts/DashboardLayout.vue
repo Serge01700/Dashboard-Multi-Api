@@ -36,12 +36,22 @@
             <Sidebar class="items-center" :isDarkMode="isDarkMode" />
           </div>
 
+        <!-- Sélecteur de couleur ellipse -->
+        <div class="absolute bottom-4 right-20 z-30 flex items-center gap-2 px-2 py-1 rounded-md"
+             :class="isDarkMode ? 'bg-dark-card text-white' : 'bg-light-card text-gray-800'">
+          <span class="text-sm"></span>
+          <input type="color"
+                 :value="isDarkMode ? darkEllipseColor : lightEllipseColor"
+                 @input="onEllipseColorInput($event)"
+                 class="w-8 h-8 p-0 border-0 bg-transparent cursor-pointer" />
+        </div>
+
         <!-- Bouton dark mode -->
         <div class="absolute bottom-4 right-4 z-30">
           <button 
             class="p-2 rounded-full transition-colors duration-300"
             :class="isDarkMode ? 'bg-dark-card text-white' : 'bg-light-card text-gray-800'"
-            @click="$emit('update:isDarkMode', !isDarkMode)"
+            @click="$emit('update:isDarkMode', !isDarkMode); updateEllipseColor(); setInitialEllipseOpacity();"
           >
             {{ isDarkMode ? '☀️' : '🌙' }}
           </button>
@@ -62,6 +72,9 @@ export default {
       time: 0,
       waveSpeed: 0.001,
       waveAmplitude: 40,
+      // Couleurs ellipse par thème
+      lightEllipseColor: '#87A4D2',
+      darkEllipseColor: '#8a8faa'
     }
   },
   props: {
@@ -72,11 +85,11 @@ export default {
   },
   emits: ['update:isDarkMode'],
   mounted() {
+    this.readDefaultColorsFromCSS();
+    this.restoreEllipseColorsFromStorage();
     this.startWaveAnimation();
     this.updateEllipseColor();
-    if (this.$refs.ellipseBlur) {
-      this.$refs.ellipseBlur.style.opacity = this.isDarkMode ? "0.4" : "0.7";
-    }
+    this.setInitialEllipseOpacity();
   },
   beforeDestroy() {
     if (this.animationFrameId) {
@@ -84,19 +97,59 @@ export default {
     }
   },
   methods: {
-    toggleTheme() {
-      this.$emit('update:isDarkMode', !this.isDarkMode);
-      this.updateEllipseColor();
+    setInitialEllipseOpacity() {
       if (this.$refs.ellipseBlur) {
-        this.$refs.ellipseBlur.style.opacity = this.isDarkMode ? "0.4" : "0.7";
+        this.$refs.ellipseBlur.style.opacity = this.isDarkMode ? '0.4' : '0.7';
       }
+    },
+    readDefaultColorsFromCSS() {
+      const root = document.documentElement;
+      const styles = getComputedStyle(root);
+      const cssLight = styles.getPropertyValue('--color-light-ellipse').trim();
+      const cssDark = styles.getPropertyValue('--color-dark-ellipse').trim();
+      if (cssLight) this.lightEllipseColor = this.normalizeColor(cssLight);
+      if (cssDark) this.darkEllipseColor = this.normalizeColor(cssDark);
+    },
+    restoreEllipseColorsFromStorage() {
+      const savedLight = localStorage.getItem('ellipseColorLight');
+      const savedDark = localStorage.getItem('ellipseColorDark');
+      if (savedLight) this.lightEllipseColor = savedLight;
+      if (savedDark) this.darkEllipseColor = savedDark;
+    },
+    saveEllipseColorsToStorage() {
+      localStorage.setItem('ellipseColorLight', this.lightEllipseColor);
+      localStorage.setItem('ellipseColorDark', this.darkEllipseColor);
+    },
+    normalizeColor(color) {
+      // Garde hex direct, convertit éventuellement rgb(a) vers hex simple sans alpha
+      if (color.startsWith('#')) return color;
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (match) {
+        const r = parseInt(match[1], 10).toString(16).padStart(2, '0');
+        const g = parseInt(match[2], 10).toString(16).padStart(2, '0');
+        const b = parseInt(match[3], 10).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`;
+      }
+      return color;
+    },
+
+    onEllipseColorInput(event) {
+      const value = event.target.value;
+      if (this.isDarkMode) {
+        this.darkEllipseColor = value;
+      } else {
+        this.lightEllipseColor = value;
+      }
+      this.saveEllipseColorsToStorage();
+      this.updateEllipseColor();
     },
 
     updateEllipseColor() {
       if (this.$refs.ellipseBlur) {
-        this.$refs.ellipseBlur.style.backgroundColor = this.isDarkMode 
-          ? 'var(--color-dark-ellipse)' 
-          : 'var(--color-light-ellipse)';
+        const color = this.isDarkMode ? this.darkEllipseColor : this.lightEllipseColor;
+        this.$refs.ellipseBlur.style.backgroundColor = color || (this.isDarkMode 
+          ? 'var(--color-dark-ellipse)'
+          : 'var(--color-light-ellipse)');
       }
     },
     startWaveAnimation() {
@@ -117,8 +170,6 @@ export default {
       
       this.animationFrameId = requestAnimationFrame(this.animateWave);
     }
-  
-    
   }
 }
 </script>
