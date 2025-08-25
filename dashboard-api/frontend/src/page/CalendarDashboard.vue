@@ -56,22 +56,22 @@
       </div>
       <div class="mb-2 flex gap-4">
         <div class="flex-1">
-          <label class="block mb-1">Début</label>
+          <label class="block mb-1">Start</label>
           <input v-model="form.start" type="date" required class="w-full p-2 rounded border"
                  :class="isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'" />
         </div>
         <div class="flex-1">
-          <label class="block mb-1">Fin</label>
+          <label class="block mb-1">End</label>
           <input v-model="form.end" type="date" required class="w-full p-2 rounded border"
                  :class="isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'" />
         </div>
       </div>
       <button type="submit" class="mt-2 px-4 py-2 rounded bg-yellow-600 text-white hover:bg-yellow-700">
-        Modifier
+        Edit
       </button>
       <button type="button" class="mt-2 ml-2 px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-700"
               @click="cancelEdit">
-        Annuler
+        Cancel
       </button>
     </form>
 
