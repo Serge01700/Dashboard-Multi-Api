@@ -59,8 +59,6 @@ import UpcomingEvents from '@/components/UpcomingEvents.vue';
 import ApiMetric from '@/components/ApiMetric.vue';
 import RandomMusic from '@/components/RandomMusic.vue';
 
-const dashboardOrderStore = useDashboardOrderStore();
-const widgets = ref([]);
 
 const props = defineProps({
   isDarkMode: {
@@ -68,6 +66,12 @@ const props = defineProps({
     required: true
   }
 });
+
+
+const dashboardOrderStore = useDashboardOrderStore();
+const widgets = ref([]);
+
+
 
 const defaultOrder = [
   { id: 1, name: 'Weather', component: markRaw(WidgetWeatherHome) },
@@ -79,7 +83,7 @@ const defaultOrder = [
 ];
 
 onMounted(() => {
-  // Force reset the dashboard order to include the new music widget
+  
   dashboardOrderStore.reset(defaultOrder);
   
   // Restaure l'ordre depuis le store

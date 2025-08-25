@@ -8,14 +8,14 @@
       class=" bg-dark-card mb-4 px-4 py-2 rounded bg-blue-600 text-white"
       @click="showForm = !showForm"
     >
-      {{ showForm ? 'Annuler' : 'Ajouter un événement' }}
+      {{ showForm ? 'Cancel' : 'Add an event' }}
     </button>
 
     <!-- Formulaire d'ajout -->
     <form v-if="showForm" @submit.prevent="addEvent" class="mb-6 p-4 rounded-lg shadow"
           :class="isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'">
       <div class="mb-2">
-        <label class="block mb-1">Titre</label>
+        <label class="block mb-1">Title</label>
         <input v-model="form.title" required class="w-full p-2 rounded border"
                :class="isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'" />
       </div>
@@ -26,18 +26,18 @@
       </div>
       <div class="mb-2 flex gap-4">
         <div class="flex-1">
-          <label class="block mb-1">Début</label>
+          <label class="block mb-1">Start</label>
           <input v-model="form.start" type="date" required class="w-full p-2 rounded border"
                  :class="isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'" />
         </div>
         <div class="flex-1">
-          <label class="block mb-1">Fin</label>
+          <label class="block mb-1">End</label>
           <input v-model="form.end" type="date" required class="w-full p-2 rounded border"
                  :class="isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'" />
         </div>
       </div>
       <button type="submit" class="mt-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
-        Ajouter
+        Add
       </button>
     </form>
 
