@@ -37,9 +37,9 @@
           </div>
 
         <!-- Sélecteur de couleur ellipse -->
-        <div class="absolute bottom-4 right-20 z-30 flex items-center gap-2 px-2 py-1 rounded-md"
+        <div class="absolute bottom-5 w-8 h-8 left-2  z-30 flex items-center gap-2 px-2 py-1 rounded-md"
              :class="isDarkMode ? 'bg-dark-card text-white' : 'bg-light-card text-gray-800'">
-          <span class="text-sm"></span>
+          
           <input type="color"
                  :value="isDarkMode ? darkEllipseColor : lightEllipseColor"
                  @input="onEllipseColorInput($event)"
