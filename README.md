@@ -95,7 +95,7 @@ npm run dev
 npm run dev
 ```
 
-5. Avec Docke
+5. Avec Docker
 ```bash
 docker-compose up --build
 ```
@@ -110,7 +110,7 @@ Pour utiliser toutes les fonctionnalités, vous devrez configurer :
 1. Gmail API (OAuth2)
 2. Weather API
 3. Finnhub API
-4. API Musicale
+4. Itunes API
 
 Consultez la documentation de chaque service pour obtenir vos clés API.
 
