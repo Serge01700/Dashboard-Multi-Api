@@ -11,32 +11,16 @@
 
 </template>
 
-<script >
+<script setup>
+import { ref } from 'vue'
 import WidgetWeather from './components/WidgetWeatherHome.vue'
+import Sidebar from './components/Sidebar.vue'
+import HomePage from './page/HomePage.vue'
 
-import Sidebar from './components/Sidebar.vue';
-import HomePage from './page/HomePage.vue';
+const isDarkMode = ref(true)
 
-
-
-export default {
-    components:{
-        WidgetWeather,
-        Sidebar,
-        HomePage
-    },
-
-    data(){
-        return{
-            isDarkMode: true
-        }
-    },
-
-    methods: {
-        toggleTheme(){
-            this.isDarkMode = !this.isDarkMode
-        }
-    }
+const toggleTheme = () => {
+    isDarkMode.value = !isDarkMode.value
 }
 </script>
 
