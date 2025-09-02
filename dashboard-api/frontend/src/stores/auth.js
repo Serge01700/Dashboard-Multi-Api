@@ -177,7 +177,6 @@ export const useAuthStore = defineStore('auth', {
       }
     },
   
-    // Le reste du code reste inchangé
     validateRegistrationData({ email, password, name }) {
       const errors = {};
       

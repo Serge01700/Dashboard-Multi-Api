@@ -57,60 +57,58 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'RecentTasks',
-  props: {
-    isDarkMode: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data() {
-    return {
-      recentTasks: []
-    }
-  },
-  computed: {
-    currentDate() {
-      return new Date().toLocaleDateString('en-EN', {
-        month: 'long',
-        day: 'numeric',
-        weekday: 'short'
-      });
-    }
-  },
-  methods: {
-    loadTasks() {
-      const savedTasks = localStorage.getItem('tasks');
-      if (savedTasks) {
-        this.recentTasks = JSON.parse(savedTasks).slice(0, 5);
-      }
-    },
-    updateTask(index) {
-      const allTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-      const taskIndex = allTasks.findIndex(t => t.text === this.recentTasks[index].text);
-      if (taskIndex !== -1) {
-        allTasks[taskIndex] = this.recentTasks[index];
-        localStorage.setItem('tasks', JSON.stringify(allTasks));
-        window.dispatchEvent(new Event('storage'));
-      }
-    },
-    formatDate(date) {
-      return new Date(date).toLocaleDateString('en-EN', {
-        day: 'numeric',
-        month: 'short'
-      });
-    }
-  },
-  mounted() {
-    this.loadTasks();
-    window.addEventListener('storage', this.loadTasks);
-  },
-  beforeUnmount() {
-    window.removeEventListener('storage', this.loadTasks);
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+
+const props = defineProps({
+  isDarkMode: {
+    type: Boolean,
+    required: true
+  }
+})
+
+const recentTasks = ref([])
+
+const currentDate = computed(() => {
+  return new Date().toLocaleDateString('en-EN', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short'
+  })
+})
+
+const loadTasks = () => {
+  const savedTasks = localStorage.getItem('tasks')
+  if (savedTasks) {
+    recentTasks.value = JSON.parse(savedTasks).slice(0, 5)
   }
 }
+
+const updateTask = (index) => {
+  const allTasks = JSON.parse(localStorage.getItem('tasks') || '[]')
+  const taskIndex = allTasks.findIndex(t => t.text === recentTasks.value[index].text)
+  if (taskIndex !== -1) {
+    allTasks[taskIndex] = recentTasks.value[index]
+    localStorage.setItem('tasks', JSON.stringify(allTasks))
+    window.dispatchEvent(new Event('storage'))
+  }
+}
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('en-EN', {
+    day: 'numeric',
+    month: 'short'
+  })
+}
+
+onMounted(() => {
+  loadTasks()
+  window.addEventListener('storage', loadTasks)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', loadTasks)
+})
 </script>
 
 <style scoped>

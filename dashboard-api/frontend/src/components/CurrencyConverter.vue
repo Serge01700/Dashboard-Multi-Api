@@ -52,61 +52,48 @@
   </div>
 </template>
 
-<script>
-import { ref, watch, onMounted } from 'vue';
-import { finnhubService } from '../services/finnhub';
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+import { finnhubService } from '../services/finnhub'
 
-export default {
-  name: 'CurrencyConverter',
-  props: {
-    isDarkMode: {
-      type: Boolean,
-      default: false
-    }
-  },
-  setup() {
-    const currencyAmount = ref(1);
-    const fromCurrency = ref('USD');
-    const toCurrency = ref('EUR');
-    const convertedAmount = ref(0);
-    const currencies = ref(['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY']);
-
-    const updateConversion = async () => {
-      if (currencyAmount.value && fromCurrency.value && toCurrency.value) {
-        try {
-          const result = await finnhubService.convertCurrency(
-            currencyAmount.value,
-            fromCurrency.value,
-            toCurrency.value
-          );
-          convertedAmount.value = result;
-        } catch (error) {
-          console.error('Erreur de conversion:', error);
-        }
-      }
-    };
-
-    const formatAmount = (amount) => {
-      return new Intl.NumberFormat('fr-FR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(amount || 0);
-    };
-
-    watch([currencyAmount, fromCurrency, toCurrency], updateConversion);
-
-    onMounted(async () => {
-      await updateConversion();
-    });
-
-    return {
-      currencyAmount,
-      fromCurrency,
-      toCurrency,
-      convertedAmount,
-      currencies,
-      formatAmount
-    };
+const props = defineProps({
+  isDarkMode: {
+    type: Boolean,
+    default: false
   }
-};
+})
+
+const currencyAmount = ref(1)
+const fromCurrency = ref('USD')
+const toCurrency = ref('EUR')
+const convertedAmount = ref(0)
+const currencies = ref(['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY'])
+
+const updateConversion = async () => {
+  if (currencyAmount.value && fromCurrency.value && toCurrency.value) {
+    try {
+      const result = await finnhubService.convertCurrency(
+        currencyAmount.value,
+        fromCurrency.value,
+        toCurrency.value
+      )
+      convertedAmount.value = result
+    } catch (error) {
+      console.error('Erreur de conversion:', error)
+    }
+  }
+}
+
+const formatAmount = (amount) => {
+  return new Intl.NumberFormat('fr-FR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(amount || 0)
+}
+
+watch([currencyAmount, fromCurrency, toCurrency], updateConversion)
+
+onMounted(async () => {
+  await updateConversion()
+})
 </script> 
