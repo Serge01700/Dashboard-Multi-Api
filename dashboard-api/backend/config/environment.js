@@ -1,4 +1,3 @@
-// Détection explicite de l'environnement de production
 const isDevelopment = process.env.NODE_ENV !== 'production';
 console.log('Current NODE_ENV:', process.env.NODE_ENV);
 console.log('isDevelopment:', isDevelopment);

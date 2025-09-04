@@ -83,10 +83,7 @@ const defaultOrder = [
 ];
 
 onMounted(() => {
-  
-  dashboardOrderStore.reset(defaultOrder);
-  
-  // Restaure l'ordre depuis le store
+  // Restaure l'ordre depuis le store sans réinitialiser
   const restored = dashboardOrderStore.restore(defaultOrder);
   
   // Réassocie la référence du composant Vue à chaque widget
