@@ -109,6 +109,65 @@ router.get('/user/:id', async (req, res) => {
   }
 });
 
+// Route pour récupérer le profil de l'utilisateur connecté (utilisé par le frontend)
+router.get('/profile', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: 'Authorization header missing' });
+
+    const token = authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token missing' });
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    const user = await User.findById(decoded.userId).select('-password');
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
+
+// Route pour mettre à jour le profil de l'utilisateur connecté
+router.put('/profile', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: 'Authorization header missing' });
+
+    const token = authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token missing' });
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    const { name, email, password } = req.body;
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate(decoded.userId, updateData, { new: true }).select('-password');
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
+
 // Route pour mettre à jour les informations de l'utilisateur
 router.put('/user/:id', async (req, res) => {
   try {
