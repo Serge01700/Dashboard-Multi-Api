@@ -79,10 +79,19 @@ const router = createRouter({
     routes
 })
 
-// Navigation guard
-router.beforeEach((to, from, next) => {
+// Navigation guard (async to ensure auth store is initialized)
+router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore()
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+    // Ensure auth store initialized at least once
+    if (!authStore.token && !authStore.loading) {
+        try {
+            await authStore.init()
+        } catch (e) {
+            // ignore init errors here
+        }
+    }
 
     // Si la route nécessite une authentification
     if (requiresAuth) {

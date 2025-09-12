@@ -39,6 +39,24 @@ router.get('/auth', (req, res) => {
   res.redirect(authUrl);
 });
 
+// Route pour récupérer une pièce jointe
+router.get('/attachment/:messageId/:attachmentId', ensureAuthenticated, async (req, res) => {
+  try {
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const attachment = await gmail.users.messages.attachments.get({
+      userId: 'me',
+      messageId: req.params.messageId,
+      id: req.params.attachmentId
+    });
+
+    const data = Buffer.from(attachment.data.data, 'base64');
+    res.send(data);
+  } catch (error) {
+    console.error('Erreur lors de la récupération de la pièce jointe:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération de la pièce jointe' });
+  }
+});
+
 // Route de callback après l'authentification Google
 router.get('/callback', async (req, res) => {
   const { code } = req.query;
@@ -98,119 +116,64 @@ router.get('/mails', ensureAuthenticated, async (req, res) => {
         const mail = await gmail.users.messages.get({ 
           userId: 'me', 
           id: msg.id,
-          format: 'raw' // Utiliser le format raw pour obtenir le message complet
+          format: 'full' // Utiliser le format full pour obtenir toutes les parties du message
         });
 
-        // Décoder le message raw
-        const rawContent = Buffer.from(mail.data.raw, 'base64').toString('utf8');
-        
-        // Parser les en-têtes
+        // Extraire les en-têtes utiles
         const headers = {};
-        const headerMatch = rawContent.match(/^(.*?)\r?\n\r?\n/s);
-        if (headerMatch) {
-          const headerLines = headerMatch[1].split(/\r?\n/);
-          let currentHeader = '';
-          headerLines.forEach(line => {
-            if (line.match(/^\s/)) {
-              // Continuation de l'en-tête précédent
-              headers[currentHeader] += ' ' + line.trim();
-            } else {
-              const match = line.match(/^(.*?):\s*(.*)/);
-              if (match) {
-                currentHeader = match[1].toLowerCase();
-                headers[currentHeader] = match[2];
-              }
-            }
-          });
-        }
-
-        // Extraire le contenu
-        let content = '';
-        const boundary = headers['content-type']?.match(/boundary="?([^";\s]*)"?/)?.[1];
-        
-        if (boundary) {
-          const parts = rawContent.split('--' + boundary);
-          parts.forEach(part => {
-            if (part.includes('text/html')) {
-              const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
-              if (match) {
-                content = match[1].trim();
-                // Décoder le contenu s'il est encodé en base64
-                if (part.toLowerCase().includes('content-transfer-encoding: base64')) {
-                  content = Buffer.from(content.replace(/\s/g, ''), 'base64').toString('utf8');
-                }
-              }
-            } else if (!content && part.includes('text/plain')) {
-              const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
-              if (match) {
-                content = match[1].trim();
-                // Décoder le contenu s'il est encodé en base64
-                if (part.toLowerCase().includes('content-transfer-encoding: base64')) {
-                  content = Buffer.from(content.replace(/\s/g, ''), 'base64').toString('utf8');
-                }
-                // Convertir le texte brut en HTML basique
-                content = content.replace(/\n/g, '<br>');
-              }
-            }
-          });
-        } else {
-          // Si pas de boundary, essayer de trouver le contenu après les en-têtes
-          const match = rawContent.match(/\r?\n\r?\n([\s\S]*?)$/);
-          if (match) {
-            content = match[1].trim();
-            // Vérifier si le contenu est encodé en base64
-            if (headers['content-transfer-encoding']?.toLowerCase() === 'base64') {
-              content = Buffer.from(content.replace(/\s/g, ''), 'base64').toString('utf8');
-            }
-          }
-        }
-
-        // Nettoyer le contenu HTML
-        content = content
-          .replace(/&quot;/g, '"')
-          .replace(/&apos;/g, "'")
-          .replace(/&amp;/g, '&')
-          .replace(/&#39;/g, "'")
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .trim();
-
-        // Extraire les pièces jointes
-        const attachments = [];
-        if (boundary) {
-          const parts = rawContent.split('--' + boundary);
-          parts.forEach(part => {
-            const contentType = part.match(/Content-Type:\s*([^;\r\n]+)/i)?.[1];
-            const contentDisposition = part.match(/Content-Disposition:([^\r\n]+)/i)?.[1];
-            const filename = contentDisposition?.match(/filename="?([^";\r\n]*)"?/)?.[1];
-            const contentId = part.match(/Content-ID:\s*<([^>]+)>/i)?.[1];
-
-            if (filename || (contentType && !contentType.startsWith('text/'))) {
-              const match = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--|\r?\n$)/);
-              if (match) {
-                const attachmentData = match[1].trim();
-                attachments.push({
-                  filename: filename || 'attachment',
-                  mimeType: contentType || 'application/octet-stream',
-                  content: attachmentData,
-                  contentId: contentId,
-                  isInline: contentDisposition?.includes('inline')
-                });
-              }
-            }
-          });
-        }
-
-        // Remplacer les références CID par des URLs pour les images intégrées
-        attachments.forEach(attachment => {
-          if (attachment.contentId && attachment.isInline) {
-            const imageUrl = `/gmail/image/${msg.id}/${attachment.contentId}`;
-            content = content.replace(
-              new RegExp(`cid:${attachment.contentId}`, 'gi'),
-              imageUrl
-            );
-          }
+        (mail.data.payload.headers || []).forEach(header => {
+          headers[header.name.toLowerCase()] = header.value;
         });
+
+        // Fonctions utilitaires pour extraire contenu et pièces jointes depuis payload
+        const decodeBody = (body) => {
+          if (!body) return '';
+          try {
+            // Gmail renvoie du base64url
+            const normalized = body.replace(/-/g, '+').replace(/_/g, '/');
+            return Buffer.from(normalized, 'base64').toString('utf8');
+          } catch {
+            return '';
+          }
+        };
+
+        const collectParts = (payload) => {
+          const result = { html: '', text: '', attachments: [] };
+          if (!payload) return result;
+
+          const stack = [payload];
+          while (stack.length) {
+            const part = stack.pop();
+            const mimeType = part.mimeType || part.headers?.find(h => h.name.toLowerCase() === 'content-type')?.value || '';
+
+            if (part.parts && part.parts.length) {
+              part.parts.forEach(p => stack.push(p));
+            }
+
+            if (part.body && part.body.data) {
+              if (mimeType.includes('text/html')) {
+                result.html += decodeBody(part.body.data);
+              } else if (mimeType.includes('text/plain')) {
+                result.text += decodeBody(part.body.data);
+              }
+            }
+
+            // Pièces jointes
+            const isAttachment = !!part.body?.attachmentId || (part.filename && part.filename !== '');
+            if (isAttachment) {
+              result.attachments.push({
+                filename: part.filename || 'attachment',
+                mimeType: part.mimeType || 'application/octet-stream',
+                size: part.body?.size || 0,
+                attachmentId: part.body?.attachmentId
+              });
+            }
+          }
+          return result;
+        };
+
+        const extracted = collectParts(mail.data.payload);
+        let content = extracted.html || (extracted.text ? extracted.text.replace(/\n/g, '<br>') : '');
 
         return {
           id: msg.id,
@@ -219,7 +182,7 @@ router.get('/mails', ensureAuthenticated, async (req, res) => {
           date: headers['date'] || '',
           content: content || mail.data.snippet,
           snippet: mail.data.snippet,
-          attachments
+          attachments: extracted.attachments
         };
 
       } catch (error) {
@@ -335,7 +298,8 @@ router.delete('/mails/:id', ensureAuthenticated, async (req, res) => {
 });
 
 // Route pour télécharger une pièce jointe
-router.get('/attachment/:messageId/:attachmentId', async (req, res) => {
+// NOTE: cette route existe déjà plus haut avec ensureAuthenticated. On supprime le doublon.
+/* router.get('/attachment/:messageId/:attachmentId', async (req, res) => {
   try {
     const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
     const { messageId, attachmentId } = req.params;
@@ -364,7 +328,7 @@ router.get('/attachment/:messageId/:attachmentId', async (req, res) => {
     console.error('Erreur lors du téléchargement de la pièce jointe:', error);
     res.status(500).json({ error: 'Erreur lors du téléchargement de la pièce jointe' });
   }
-});
+}); */
 
 // Route pour afficher une image en ligne
 router.get('/image/:messageId/:contentId', async (req, res) => {

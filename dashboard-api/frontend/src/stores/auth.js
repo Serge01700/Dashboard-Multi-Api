@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
             
             // Vérifier si l'utilisateur existe toujours sur le serveur 
             try {
-              const response = await apiClient.get('/users/profile');
+              const response = await apiClient.get('/auth/profile');
               // Mettre à jour les informations utilisateur si nécessaire
               this.user = response.data;
             } catch (profileError) {
@@ -233,7 +233,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true;
       
       try {
-        const response = await apiClient.put('/users/profile', userData);
+  const response = await apiClient.put('/auth/profile', userData);
         this.user = { ...this.user, ...response.data };
         return { success: true, user: this.user };
       } catch (error) {

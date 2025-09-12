@@ -68,7 +68,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { fetchWeatherForLyon } from '@/services/weather.js';
-import { fetchAllMails } from '@/services/gmail.js';
+import { fetchAllMails } from '@/services/mail.js';
 import { finnhubService } from '@/services/finnhub.js';
 import { musicService } from '@/services/music.js';
 
