@@ -16,6 +16,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.0",
     "node-cache": "^5.1.2",
+    "axios": "^1.4.0",
     "vue-chartjs": "^5.3.2"
   },
   "devDependencies": {

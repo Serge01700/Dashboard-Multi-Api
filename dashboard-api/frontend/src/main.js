@@ -6,7 +6,7 @@ import { createPinia } from 'pinia'
 import axios from 'axios';
 
 // Configuration globale d'Axios
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api';
 
 
 const app = createApp(App)

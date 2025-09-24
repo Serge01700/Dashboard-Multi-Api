@@ -11,27 +11,22 @@ const cache = new NodeCache({
 // Wrapper pour les opérations de cache avec gestion des erreurs
 export const exchangeCache = {
     get: (key) => {
-        try {
-            return cache.get(key);
-        } catch (error) {
+        try { return cache.get(key);} 
+        catch (error) {
             console.error('Erreur lors de la récupération du cache taux de change:', error);
             return null;
         }
     },
-
     set: (key, value, ttl = 3600) => {
-        try {
-            return cache.set(key, value, ttl);
-        } catch (error) {
+        try {  return cache.set(key, value, ttl); } catch (error) {
             console.error('Erreur lors de la mise en cache des taux de change:', error);
             return false;
         }
     },
 
     del: (key) => {
-        try {
-            return cache.del(key);
-        } catch (error) {
+        try { return cache.del(key);} 
+        catch (error) {
             console.error('Erreur lors de la suppression du cache taux de change:', error);
             return false;
         }

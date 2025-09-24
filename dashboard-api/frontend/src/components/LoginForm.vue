@@ -71,7 +71,7 @@ import { useAuthStore } from '@/stores/auth';
 
 
 // FALSE = Sécu désactiver
-const ENABLE_LOGIN_SECURITY = true;
+const ENABLE_LOGIN_SECURITY = false;
 
 export default {
   setup() {

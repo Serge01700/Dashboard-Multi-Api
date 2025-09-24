@@ -23,7 +23,6 @@ router.post('/login', async(req, res) => {
         if(!user){
             return res.status(401).json({ message: 'Identifiants invalides' });
         }
-
         // Verification du mot de passe
         const isValid = await user.comparePassword(password);
         if(!isValid){
@@ -31,14 +30,12 @@ router.post('/login', async(req, res) => {
                 message: 'Email ou mot de passe invalides'
             });
         }
-
         // Genere le token
         const token = jwt.sign(
             { userId: user._id, email: user.email, name: user.name, roles: user.roles },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-
         res.json({
             token,
             user: {
@@ -76,7 +73,7 @@ router.post('/register', async (req, res) => {
 
     // Générer le token
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, name: user.name, roles: user.roles },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -205,6 +202,59 @@ router.delete('/user/:id', async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
     res.json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
+
+// Middleware d'authentification
+function requireAuth(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: 'Authorization header missing' });
+    const token = authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token missing' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+// Middleware d'autorisation par rôles
+function requireRoles(...allowedRoles) {
+  return (req, res, next) => {
+    const roles = req.user?.roles || [];
+    const has = roles.some(r => allowedRoles.includes(r));
+    if (!has) return res.status(403).json({ message: 'Accès interdit' });
+    next();
+  };
+}
+
+// Routes ADMIN
+router.get('/admin/users', requireAuth, requireRoles('admin'), async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+});
+
+router.put('/admin/user/:id/roles', requireAuth, requireRoles('admin'), async (req, res) => {
+  try {
+    const { roles } = req.body;
+    if (!Array.isArray(roles) || roles.length === 0) {
+      return res.status(400).json({ message: 'roles doit être un tableau non vide' });
+    }
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { roles },
+      { new: true }
+    ).select('-password');
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }

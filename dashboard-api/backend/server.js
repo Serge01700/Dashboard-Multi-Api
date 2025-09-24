@@ -6,6 +6,10 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import gmailRoutes from './routes/gmail.js';
 import eventRoutes from './routes/events.js';
+import exchangeRoutes from './routes/exchange.js';
+import finnhubRoutes from './routes/finnhub.js';
+import musicRoutes from './routes/music.js';
+import weatherRoutes from './routes/weather.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,15 +28,20 @@ const startServer = async () => {
       credentials: true
     }));
 
+    // Healthcheck endpoint for docker
+    app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
     // Routes
     app.use('/api/auth', authRoutes);
     app.use('/api/gmail', gmailRoutes);
     app.use('/api/events', eventRoutes);
+    // CACHES
+    app.use('/api/exchange', exchangeRoutes);
+    app.use('/api/finnhub', finnhubRoutes);
+    app.use('/api/music', musicRoutes);
+  app.use('/api/weather', weatherRoutes);
 
-    // Route de test
-    app.get('/api/health', (req, res) => {
-      res.json({ status: 'ok', message: 'API fonctionnelle' });
-    });
+   
 
     // Démarrage du serveur
     app.listen(PORT, () => {
