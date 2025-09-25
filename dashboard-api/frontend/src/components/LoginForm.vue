@@ -70,8 +70,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 
-// FALSE = Sécu désactiver
-const ENABLE_LOGIN_SECURITY = false;
+const ENABLE_LOGIN_SECURITY = 1;
 
 export default {
   setup() {
@@ -114,7 +113,7 @@ export default {
             const lastAttempt = parseInt(sessionStorage.getItem('lastLoginAttempt') || '0');
             const currentTime = Date.now();
             
-            // Attente de 15 minutes (900000 ms) après 5 tentatives échouées
+            // Attente de 15 minutes après 5 tentatives échouées
             if (currentTime - lastAttempt < 900000) {
               const remainingTime = Math.ceil((900000 - (currentTime - lastAttempt)) / 60000);
               errorMessage.value = `Trop de tentatives. Veuillez réessayer dans ${remainingTime} minutes.`;

@@ -13,6 +13,7 @@ import weatherRoutes from './routes/weather.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+import { generalLimiter } from './config/rateLimiter.js';
 
 // Connexion à MongoDB
 const startServer = async () => {
@@ -23,6 +24,8 @@ const startServer = async () => {
 
     // Middleware
     app.use(express.json());
+    //Rate limiter général 
+    app.use('/api', generalLimiter);
     app.use(cors({
       origin: ['http://localhost:8080', 'http://localhost:5173'],
       credentials: true

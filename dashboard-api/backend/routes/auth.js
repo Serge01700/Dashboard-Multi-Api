@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 import bcrypt from 'bcryptjs';
+import { authLimiter } from '../config/rateLimiter.js';
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ if (!process.env.JWT_SECRET) {
     throw new Error('JWT_SECRET must be defined in environment variables');
 }
 
-router.post('/login', async(req, res) => {
+router.post('/login', authLimiter, async(req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -54,8 +55,8 @@ router.post('/login', async(req, res) => {
     }
 });
 
-
-router.post('/register', async (req, res) => {
+// Rate limiter strict
+router.post('/register', authLimiter, async (req, res) => {
   try {
     console.log('Received registration request:', req.body);
     
