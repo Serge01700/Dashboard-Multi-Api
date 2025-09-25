@@ -2,5 +2,12 @@
   "dependencies": {
     "vue-cal": "^4.10.2",
     "vuedraggable": "^4.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "pptxgenjs": "^4.0.1"
+  },
+  "scripts": {
+    "generate-pptx": "node scripts/generate-presentation.js"
   }
 }

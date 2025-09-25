@@ -8,6 +8,17 @@ export default defineConfig({
     vue(),
     VueDevTools()
   ],
+  server: {
+    // Proxy API requests in development to the backend running on port 3000
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path // keep /api prefix
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

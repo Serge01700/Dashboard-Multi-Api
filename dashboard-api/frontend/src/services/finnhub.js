@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiClient from './axios-config';
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY || 'd1j4jg1r01qhbuvtf9jgd1j4jg1r01qhbuvtf9k0';
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
@@ -85,13 +86,14 @@ export const finnhubService = {
         }
     },
 
-    // Obtenir les taux de change
+    // Obtenir les taux de change via le backend pour bénéficier du cache et éviter les CORS/CSP
     getExchangeRates: async (baseCurrency = 'USD') => {
         try {
-            const response = await exchangeClient.get('/latest/' + baseCurrency);
+            // Use the configured apiClient (has baseURL '/api') so we call '/api/exchange/...'
+            const response = await apiClient.get(`/exchange/latest/${baseCurrency}`);
             return response.data.rates;
         } catch (error) {
-            console.error('Erreur lors de la récupération des taux de change:', error);
+            console.error('Erreur lors de la récupération des taux de change via backend:', error);
             throw error;
         }
     },
@@ -100,8 +102,11 @@ export const finnhubService = {
     convertCurrency: async (amount, fromCurrency, toCurrency) => {
         try {
             const rates = await finnhubService.getExchangeRates(fromCurrency);
-            const rate = rates[toCurrency];
-            return amount * rate;
+            const rate = rates ? rates[toCurrency] : undefined;
+            if (rate === undefined || rate === null || Number.isNaN(Number(rate))) {
+                throw new Error(`Taux introuvable pour ${toCurrency} à partir de ${fromCurrency}`);
+            }
+            return amount * Number(rate);
         } catch (error) {
             console.error('Erreur lors de la conversion:', error);
             throw error;

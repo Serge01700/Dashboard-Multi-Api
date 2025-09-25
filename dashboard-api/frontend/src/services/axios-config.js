@@ -2,7 +2,7 @@ import axios from 'axios';
 import router from '@/router';
 
 // Récupérer l'URL de l'API
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Créer une instance Axios avec une configuration de base
 const apiClient = axios.create({

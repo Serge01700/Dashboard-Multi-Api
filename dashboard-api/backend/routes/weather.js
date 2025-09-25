@@ -13,6 +13,14 @@ const CITY_COORDINATES = {
   'lille': { lat: 50.6292, lon: 3.0573 }
 };
 
+// Route pour lister les villes disponibles
+router.get('/cities/available', (req, res) => {
+  res.json({
+    cities: Object.keys(CITY_COORDINATES),
+    total: Object.keys(CITY_COORDINATES).length
+  });
+});
+
 // Route pour obtenir la météo d'une ville
 router.get('/:city', async (req, res) => {
   const { city } = req.params;
@@ -49,14 +57,6 @@ router.get('/:city', async (req, res) => {
       details: error.message 
     });
   }
-});
-
-// Route pour lister les villes disponibles
-router.get('/cities/available', (req, res) => {
-  res.json({
-    cities: Object.keys(CITY_COORDINATES),
-    total: Object.keys(CITY_COORDINATES).length
-  });
 });
 
 async function fetchWeatherFromApi(city) {
