@@ -44,4 +44,15 @@ router.put('/:id', async (req, res) => {
   }
 })
 
+// Supprimer un événement
+router.delete('/:id', async (req, res) => {
+  try {
+    const event = await Event.findByIdAndDelete(req.params.id);
+    if (!event) return res.status(404).json({ message: 'Événement non trouvé' });
+    res.json({ message: 'Événement supprimé avec succès', id: req.params.id });
+  } catch (e) {
+    res.status(500).json({ message: 'Erreur serveur', error: e.message });
+  }
+});
+
 export default router ;
