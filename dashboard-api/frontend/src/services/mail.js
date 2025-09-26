@@ -107,3 +107,23 @@ export async function deleteMail(messageId) {
     handleMailError(error);
   }
 }
+
+// Envoyer un mail via le backend (proxy Gmail)
+export async function sendMail({ to, subject, content }) {
+  try {
+    const response = await apiClient.post('/gmail/send', { to, subject, content });
+    return response.data;
+  } catch (error) {
+    handleMailError(error);
+  }
+}
+
+// Vérifier si l'utilisateur est connecté à Gmail (backend renvoie status)
+export async function getAuthStatus() {
+  try {
+    const response = await apiClient.get('/gmail/status');
+    return response.data;
+  } catch (error) {
+    handleMailError(error);
+  }
+}
