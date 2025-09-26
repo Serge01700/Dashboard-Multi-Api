@@ -97,6 +97,10 @@
               @click="selectedEvent = null">
         Fermer
       </button>
+      <button class="mt-4 ml-2 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+              @click="confirmDeleteSelected">
+        Supprimer
+      </button>
     </div>
   </div>
 </template>
@@ -176,6 +180,24 @@ function cancelEdit() {
   editMode.value = false
   selectedEvent.value = null
   form.value = { title: '', content: '', start: '', end: '' }
+}
+
+const deleteEvent = async (id) => {
+  try {
+    await api.delete(`/events/${id}`)
+    selectedEvent.value = null
+    await fetchEvents()
+  } catch (e) {
+    console.error('Erreur lors de la suppression :', e)
+    alert("Erreur lors de la suppression de l'événement.")
+  }
+}
+
+const confirmDeleteSelected = () => {
+  if (!selectedEvent.value) return
+  if (confirm("Voulez-vous supprimer cet événement ?")) {
+    deleteEvent(selectedEvent.value._id)
+  }
 }
 
 onMounted(fetchEvents)

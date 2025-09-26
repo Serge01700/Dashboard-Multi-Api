@@ -24,6 +24,15 @@
             {{ new Date(event.start).toLocaleDateString('fr-FR') }}
           </p>
         </div>
+        <div class="ml-4 flex items-center gap-2">
+          <button @click="confirmDelete(event._id)"
+                  title="Supprimer"
+                  class="text-sm px-2 py-1 rounded flex items-center justify-center"
+                  :class="[isDarkMode ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-red-500 text-white hover:bg-red-600']">
+            <span class="sr-only">Supprimer</span>
+            <span aria-hidden="true">🗑️</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -64,4 +73,20 @@ const fetchUpcomingEvents = async () => {
 onMounted(() => {
   fetchUpcomingEvents()
 })
+
+const deleteEvent = async (id) => {
+  try {
+    await api.delete(`/events/${id}`)
+    // rafraîchir
+    await fetchUpcomingEvents()
+  } catch (err) {
+    console.error('Error deleting event:', err)
+  }
+}
+
+const confirmDelete = (id) => {
+  if (confirm('Voulez-vous vraiment supprimer cet événement ?')) {
+    deleteEvent(id)
+  }
+}
 </script> 
