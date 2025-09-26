@@ -12,6 +12,7 @@
         Se connecter à Gmail
       </button>
     </div>
+    
 
     <!-- Interface des mails -->
     <div v-else class="h-full flex flex-col mb-6">
@@ -21,7 +22,98 @@
             :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
           Emails
         </h1>
+        <button @click="showNewMailModal = true" class="px-3 py-1 rounded text-white"
+                :class="[isDarkMode ? 'bg-dark-accent' : 'bg-light-accent']">
+          +
+        </button>
       </div>
+
+      <!-- Modal Nouveau Mail -->
+      <div v-if="showNewMailModal" 
+           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-[600px] max-h-[80vh] overflow-y-auto"
+             :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card']">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+              Nouveau Message
+            </h3>
+            <button @click="showNewMailModal = false" class="text-gray-500 hover:text-gray-700">
+              ✕
+            </button>
+          </div>
+          
+          <form @submit.prevent="sendNewMail" class="space-y-4">
+              <div>
+                  <input type="email" 
+                        v-model="newMail.to" 
+                        placeholder="À :"
+                        class="w-full p-2 rounded border"
+                        :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
+                        required>
+              </div>
+              
+                <div>
+                  <input type="text" 
+                        v-model="newMail.subject" 
+                        placeholder="Objet :"
+                        class="w-full p-2 rounded border"
+                        :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
+                        required>
+              </div>
+              
+                <div>
+                  <textarea v-model="newMail.content" 
+                            placeholder="Contenu du message..."
+                            rows="10"
+                            class="w-full p-2 rounded border"
+                            :class="[isDarkMode ? 'bg-dark-card border-dark-border text-dark-text-primary' : 'bg-white border-gray-300']"
+                            required></textarea>
+                </div>
+              
+              <div class="flex justify-end gap-2">
+                <button type="button" 
+                        @click="showNewMailModal = false"
+                        class="px-4 py-2 rounded border"
+                        :class="[isDarkMode ? 'border-dark-border text-dark-text-primary' : 'border-gray-300']">
+                  Annuler
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 rounded text-white"
+                        :class="[isDarkMode ? 'bg-dark-accent' : 'bg-light-accent']"
+                        :disabled="sending">
+                  {{ sending ? 'Envoi...' : 'Envoyer' }}
+                </button>
+              </div>
+            </form>
+          </div>
+      </div>
+
+      <!-- Modal Confirmation Suppression -->
+      <div v-if="showDeleteModal" 
+           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6"
+             :class="[isDarkMode ? 'bg-dark-card' : 'bg-light-card']">
+          <h3 class="text-xl font-bold mb-4" :class="[isDarkMode ? 'text-dark-text-primary' : 'text-light-text-primary']">
+            Confirmer la suppression
+          </h3>
+          <p class="mb-6" :class="[isDarkMode ? 'text-dark-text-secondary' : 'text-light-text-secondary']">
+            Êtes-vous sûr de vouloir supprimer ce mail ?
+          </p>
+          <div class="flex justify-end gap-2">
+            <button @click="showDeleteModal = false"
+                    class="px-4 py-2 rounded border"
+                    :class="[isDarkMode ? 'border-dark-border text-dark-text-primary' : 'border-gray-300']">
+              Annuler
+            </button>
+            <button @click="deleteSelectedMail"
+                    class="px-4 py-2 rounded bg-red-500 text-white hover:bg-opacity-80">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+   
+ 
 
       <div class="flex-1 grid grid-cols-[39%_61%]">
         <!-- Liste des emails -->
@@ -142,10 +234,15 @@ const props = defineProps({
 });
 
 // État
+const showDeleteModal = ref(false);
+const selectedMailToDelete = ref(null);
+const showNewMailModal = ref(false);
+const newMail = ref({ to: '', subject: '', content: '' });
 const isAuthenticated = ref(true);
 const loading = ref(false);
 const error = ref(null);
 const mails = ref([]);
+const sending = ref(false);
 const selectedMail = ref(null);
 const activeTab = ref('all');
 
@@ -204,6 +301,37 @@ const formatSize = (bytes) => {
 
 // Initialisation
 onMounted(loadMails);
+
+// Vérifier l'auth Gmail
+const checkAuth = async () => {
+  try {
+    const status = await mailService.getAuthStatus();
+    isAuthenticated.value = !!status.isAuthenticated;
+  } catch (e) {
+    console.error('Erreur auth status:', e);
+    isAuthenticated.value = false;
+  }
+};
+
+onMounted(checkAuth);
+
+// Envoi d'un nouveau mail
+const sendNewMail = async () => {
+  sending.value = true;
+  try {
+    await mailService.sendMail(newMail.value);
+    showNewMailModal.value = false;
+    // reset
+    newMail.value = { to: '', subject: '', content: '' };
+    // recharger la boîte
+    await loadMails();
+  } catch (e) {
+    console.error('Erreur envoi mail:', e);
+    error.value = 'Erreur lors de l\'envoi du mail';
+  } finally {
+    sending.value = false;
+  }
+};
 </script>
 
 <style scoped>
